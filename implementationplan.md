@@ -6,7 +6,7 @@ Build a secure, maintainable admin panel for the SCMIPS website. College
 staff should be able to manage academic-year gallery sessions and
 photographs without editing website code.
 
-This is a **learn-by-building project**: use Cursor as a coding
+This is a **learn-by-building project**: use antigravity as a coding
 assistant, while understanding the architecture, reviewing generated
 code, testing features, and learning the Python/backend concepts behind
 each implementation.
