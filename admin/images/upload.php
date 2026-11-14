@@ -140,10 +140,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['images'])) {
                 $uploadedCount++;
 
                 // Automatically set first uploaded image as event cover photo if unset
-                if (empty($event['cover_image'])) {
+                if (empty($currentEvent['cover_image'])) {
                     $stmtSetCover = $pdo->prepare('UPDATE gallery_events SET cover_image = :cover_image WHERE id = :id AND (cover_image IS NULL OR cover_image = "")');
                     $stmtSetCover->execute([':cover_image' => $dbRelativePath, ':id' => $eventId]);
-                    $event['cover_image'] = $dbRelativePath;
+                    $currentEvent['cover_image'] = $dbRelativePath;
                 }
             } catch (PDOException $e) {
                 error_log('Image DB Insert Error: ' . $e->getMessage());
@@ -316,8 +316,8 @@ require_once __DIR__ . '/../includes/header.php';
                             $sizeFormatted = ($img['file_size'] >= 1048576) 
                                 ? round($img['file_size'] / 1048576, 2) . ' MB' 
                                 : round($img['file_size'] / 1024, 1) . ' KB';
-                            $imgSrc = '../' . $img['file_path'];
-                            $isCover = (!empty($event['cover_image']) && $event['cover_image'] === $img['file_path']);
+                            $imgSrc = get_image_url($img['file_path']);
+                            $isCover = (!empty($currentEvent['cover_image']) && $currentEvent['cover_image'] === $img['file_path']);
                         ?>
                         <div class="col-6 col-sm-4 col-md-3 col-xl-2">
                             <div class="card h-100 shadow-sm border overflow-hidden position-relative <?= $isCover ? 'border-warning border-2' : '' ?>">

@@ -116,3 +116,27 @@ function redirect(string $url): void {
     header('Location: ' . $url);
     exit;
 }
+
+/**
+ * Resolves an image path from database into a valid browser URL
+ * based on the calling script's location inside the admin module.
+ *
+ * @param string $path
+ * @return string
+ */
+function get_image_url(string $path): string {
+    $trimmed = ltrim($path, '/');
+
+    // Determine path back to project root
+    $currentDir = basename(dirname($_SERVER['PHP_SELF']));
+    $rootPrefix = ($currentDir === 'admin') ? '../' : '../../';
+
+    // If it's a legacy asset and we are in local dev where assets are inside reference/
+    if (strpos($trimmed, 'assets/') === 0 && !is_dir(__DIR__ . '/../../assets')) {
+        if (is_dir(__DIR__ . '/../../reference/scmips-website-source/assets')) {
+            return $rootPrefix . 'reference/scmips-website-source/' . $trimmed;
+        }
+    }
+
+    return $rootPrefix . $trimmed;
+}
