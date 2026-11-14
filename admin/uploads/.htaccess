@@ -1,0 +1,13 @@
+# Disable script execution in uploads directory
+Options -Indexes -ExecCGI
+
+<FilesMatch "\.(php|phtml|php3|php4|php5|php7|php8|phps|cgi|pl|py|sh|asp|aspx|exe|bat|cmd)$">
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>
+
+# Only allow legitimate image types
+<FilesMatch "\.(?i:jpe?g|png|gif|webp)$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>
