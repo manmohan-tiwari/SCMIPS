@@ -1,0 +1,155 @@
+/**
+ * SCMIPS Gallery Admin Panel - Custom Admin Stylesheet
+ */
+
+:root {
+    --brand-primary: #021371;
+    --brand-primary-light: #0d2a95;
+    --brand-secondary: #f1a238;
+    --brand-secondary-hover: #df9127;
+    --brand-dark: #1b1e22;
+    --brand-light: #f4f6f9;
+}
+
+body {
+    background-color: var(--brand-light);
+    color: #333333;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Navbar */
+.navbar-admin {
+    background-color: var(--brand-primary) !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+.navbar-brand {
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #ffffff !important;
+}
+
+.navbar-brand span {
+    color: var(--brand-secondary);
+}
+
+.nav-link {
+    color: rgba(255, 255, 255, 0.85) !important;
+    font-weight: 500;
+    padding: 0.5rem 0.9rem !important;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.nav-link:hover, .nav-link.active {
+    color: #ffffff !important;
+    background-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Page Header & Breadcrumb */
+.admin-page-header {
+    background: #ffffff;
+    border-bottom: 1px solid #e3e6f0;
+    padding: 1.25rem 0;
+    margin-bottom: 1.75rem;
+}
+
+.admin-page-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--brand-primary);
+    margin-bottom: 0;
+}
+
+/* Cards */
+.card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    background-color: #ffffff;
+    margin-bottom: 1.5rem;
+}
+
+.card-header {
+    background-color: #ffffff;
+    border-bottom: 1px solid #f0f2f5;
+    font-weight: 600;
+    padding: 1rem 1.25rem;
+    border-top-left-radius: 12px !important;
+    border-top-right-radius: 12px !important;
+}
+
+/* Buttons */
+.btn-brand-primary {
+    background-color: var(--brand-primary);
+    border-color: var(--brand-primary);
+    color: #ffffff;
+}
+
+.btn-brand-primary:hover {
+    background-color: var(--brand-primary-light);
+    border-color: var(--brand-primary-light);
+    color: #ffffff;
+}
+
+.btn-brand-secondary {
+    background-color: var(--brand-secondary);
+    border-color: var(--brand-secondary);
+    color: #212529;
+    font-weight: 600;
+}
+
+.btn-brand-secondary:hover {
+    background-color: var(--brand-secondary-hover);
+    border-color: var(--brand-secondary-hover);
+    color: #111111;
+}
+
+/* Metric / Stat Cards */
+.stat-card {
+    border-left: 4px solid var(--brand-primary);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.stat-card.stat-sessions { border-left-color: #021371; }
+.stat-card.stat-events { border-left-color: #f1a238; }
+.stat-card.stat-images { border-left-color: #198754; }
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+}
+
+/* Tables */
+.table th {
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #6c757d;
+    background-color: #fafbfc;
+    border-bottom: 2px solid #e9ecef;
+}
+
+/* Footer */
+footer.admin-footer {
+    margin-top: auto;
+    background-color: #ffffff;
+    border-top: 1px solid #e3e6f0;
+    padding: 1rem 0;
+    font-size: 0.85rem;
+    color: #6c757d;
+}
