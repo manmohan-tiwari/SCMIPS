@@ -24,6 +24,7 @@ $RECYCLE.BIN/
 error_log
 *.bak
 *.tmp
+*.zip
 test-*.php
 test_*.php
 
