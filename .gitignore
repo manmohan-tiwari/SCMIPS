@@ -24,6 +24,8 @@ $RECYCLE.BIN/
 error_log
 *.bak
 *.tmp
+test-*.php
+test_*.php
 
 # Environments & Python legacy
 .venv/

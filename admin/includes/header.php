@@ -94,6 +94,12 @@ $flashes = get_flashes();
                         </li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
+                            <a class="dropdown-item <?= ($activePage === 'profile') ? 'active' : '' ?>" href="<?= $adminPath ?>profile.php">
+                                <i class="fa-solid fa-user-gear me-2"></i> Profile & Password
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
                             <a class="dropdown-item text-danger" href="<?= $adminPath ?>logout.php">
                                 <i class="fa-solid fa-right-from-bracket me-2"></i> Log Out
                             </a>

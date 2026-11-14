@@ -138,6 +138,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['images'])) {
                     ':sort_order'    => $uploadedCount
                 ]);
                 $uploadedCount++;
+
+                // Automatically set first uploaded image as event cover photo if unset
+                if (empty($event['cover_image'])) {
+                    $stmtSetCover = $pdo->prepare('UPDATE gallery_events SET cover_image = :cover_image WHERE id = :id AND (cover_image IS NULL OR cover_image = "")');
+                    $stmtSetCover->execute([':cover_image' => $dbRelativePath, ':id' => $eventId]);
+                    $event['cover_image'] = $dbRelativePath;
+                }
             } catch (PDOException $e) {
                 error_log('Image DB Insert Error: ' . $e->getMessage());
                 @unlink($destinationPath); // Cleanup file if DB insert fails
@@ -320,9 +327,18 @@ require_once __DIR__ . '/../includes/header.php';
                                 ? round($img['file_size'] / 1048576, 2) . ' MB' 
                                 : round($img['file_size'] / 1024, 1) . ' KB';
                             $imgSrc = '../' . $img['file_path'];
+                            $isCover = (!empty($event['cover_image']) && $event['cover_image'] === $img['file_path']);
                         ?>
                         <div class="col-6 col-sm-4 col-md-3 col-xl-2">
-                            <div class="card h-100 shadow-sm border overflow-hidden">
+                            <div class="card h-100 shadow-sm border overflow-hidden position-relative <?= $isCover ? 'border-warning border-2' : '' ?>">
+                                <?php if ($isCover): ?>
+                                    <div class="position-absolute top-0 start-0 m-1" style="z-index: 2;">
+                                        <span class="badge bg-warning text-dark shadow-sm">
+                                            <i class="fa-solid fa-star me-1"></i>Cover
+                                        </span>
+                                    </div>
+                                <?php endif; ?>
+
                                 <a href="<?= e($imgSrc) ?>" target="_blank" title="View Full Image">
                                     <img src="<?= e($imgSrc) ?>" class="card-img-top" alt="<?= e($img['original_name']) ?>" 
                                          style="height: 140px; object-fit: cover; background: #eee;">
@@ -333,15 +349,28 @@ require_once __DIR__ . '/../includes/header.php';
                                     </div>
                                     <div class="d-flex align-items-center justify-content-between text-muted" style="font-size: 0.75rem;">
                                         <span><?= $sizeFormatted ?></span>
-                                        <form method="POST" action="delete.php" class="d-inline"
-                                              onsubmit="return confirm('Delete this photograph? This will permanently delete the file from disk.');">
-                                            <?= csrf_field() ?>
-                                            <input type="hidden" name="image_id" value="<?= (int)$img['id'] ?>">
-                                            <input type="hidden" name="event_id" value="<?= $eventId ?>">
-                                            <button type="submit" class="btn btn-link text-danger p-0 border-0" title="Delete Photo">
-                                                <i class="fa-solid fa-trash-can"></i>
-                                            </button>
-                                        </form>
+                                        <div class="d-flex align-items-center">
+                                            <?php if (!$isCover): ?>
+                                                <form method="POST" action="set_cover.php" class="d-inline me-2" title="Set as Cover Photo">
+                                                    <?= csrf_field() ?>
+                                                    <input type="hidden" name="image_id" value="<?= (int)$img['id'] ?>">
+                                                    <input type="hidden" name="event_id" value="<?= $eventId ?>">
+                                                    <button type="submit" class="btn btn-link text-muted p-0 border-0" title="Set as Cover Photo">
+                                                        <i class="fa-regular fa-star text-warning"></i>
+                                                    </button>
+                                                </form>
+                                            <?php endif; ?>
+
+                                            <form method="POST" action="delete.php" class="d-inline"
+                                                  onsubmit="return confirm('Delete this photograph? This will permanently delete the file from disk.');">
+                                                <?= csrf_field() ?>
+                                                <input type="hidden" name="image_id" value="<?= (int)$img['id'] ?>">
+                                                <input type="hidden" name="event_id" value="<?= $eventId ?>">
+                                                <button type="submit" class="btn btn-link text-danger p-0 border-0" title="Delete Photo">
+                                                    <i class="fa-solid fa-trash-can"></i>
+                                                </button>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
