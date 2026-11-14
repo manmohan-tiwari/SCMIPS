@@ -1,9 +1,30 @@
 /**
- * SCMIPS Gallery Admin Panel - Custom JavaScript Helpers
+ * SCMIPS Gallery Admin Panel - Custom JavaScript Helpers & Layout Controls
  */
 
 document.addEventListener('DOMContentLoaded', function () {
-    // Auto-dismiss alerts after 4.5 seconds
+    // 1. Sidebar Toggle & Mobile Overlay
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const adminSidebar = document.getElementById('adminSidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+    if (sidebarToggle && adminSidebar) {
+        sidebarToggle.addEventListener('click', function () {
+            adminSidebar.classList.toggle('show');
+            if (sidebarOverlay) {
+                sidebarOverlay.classList.toggle('show');
+            }
+        });
+    }
+
+    if (sidebarOverlay && adminSidebar) {
+        sidebarOverlay.addEventListener('click', function () {
+            adminSidebar.classList.remove('show');
+            sidebarOverlay.classList.remove('show');
+        });
+    }
+
+    // 2. Auto-dismiss alerts after 4.5 seconds
     const alerts = document.querySelectorAll('.alert-dismissible');
     alerts.forEach(function (alert) {
         setTimeout(function () {
@@ -14,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 4500);
     });
 
-    // Universal delete confirmation
+    // 3. Universal delete confirmation
     const deleteButtons = document.querySelectorAll('[data-confirm-delete]');
     deleteButtons.forEach(function (btn) {
         btn.addEventListener('click', function (e) {

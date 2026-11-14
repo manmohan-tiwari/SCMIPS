@@ -120,13 +120,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 require_once __DIR__ . '/includes/header.php';
 ?>
 
-<div class="row mb-4">
-    <div class="col-12">
-        <h2 class="fw-bold mb-1">
-            <i class="fa-solid fa-user-gear text-primary me-2"></i>Admin Profile & Security
-        </h2>
-        <p class="text-muted mb-0">Update your administrative profile details and change your account password.</p>
-    </div>
+<div class="mb-4">
+    <p class="text-muted mb-0 small">Update your administrative profile details and change your account password.</p>
 </div>
 
 <?php if (!empty($errors)): ?>

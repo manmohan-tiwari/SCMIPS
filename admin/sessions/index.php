@@ -27,16 +27,15 @@ try {
 require_once __DIR__ . '/../includes/header.php';
 ?>
 
-<!-- Page Header & Action Button -->
-<div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-4 gap-3">
+<!-- Action Controls -->
+<div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
     <div>
-        <h1 class="h3 mb-1 fw-bold" style="color: var(--brand-primary);">Academic Sessions</h1>
         <p class="text-muted mb-0 small">
             Organize gallery photographs into academic years (e.g. 2024–2025, 2023–2024).
         </p>
     </div>
     <div>
-        <a href="create.php" class="btn btn-brand-primary shadow-sm">
+        <a href="create.php" class="btn btn-warning shadow-sm">
             <i class="fa-solid fa-plus me-1"></i> Add Academic Session
         </a>
     </div>

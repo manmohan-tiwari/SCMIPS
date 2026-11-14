@@ -188,32 +188,22 @@ if ($currentEvent) {
 require_once __DIR__ . '/../includes/header.php';
 ?>
 
-<!-- Breadcrumbs & Heading -->
-<div class="mb-4">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb mb-1 small">
-            <li class="breadcrumb-item"><a href="../dashboard.php">Dashboard</a></li>
-            <li class="breadcrumb-item"><a href="../events/index.php">Events</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Upload Photos</li>
-        </ol>
-    </nav>
-    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
-        <div>
-            <h1 class="h3 fw-bold mb-1" style="color: var(--brand-primary);">Gallery Photographs</h1>
-            <p class="text-muted mb-0 small">
-                <?php if ($currentEvent): ?>
-                    Managing photos for: <strong><?= e($currentEvent['title']) ?></strong> &bull; 
-                    <span class="badge bg-light text-dark border"><?= e($currentEvent['academic_year']) ?></span>
-                <?php else: ?>
-                    Select an event to upload and manage photographs.
-                <?php endif; ?>
-            </p>
-        </div>
-        <div class="d-flex gap-2">
-            <a href="../events/index.php<?= $currentEvent ? '?session_id=' . (int)$currentEvent['session_id'] : '' ?>" class="btn btn-outline-secondary btn-sm">
-                <i class="fa-solid fa-arrow-left me-1"></i> Back to Events
-            </a>
-        </div>
+<!-- Action Controls -->
+<div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
+    <div>
+        <p class="text-muted mb-0 small">
+            <?php if ($currentEvent): ?>
+                Managing photos for: <strong><?= e($currentEvent['title']) ?></strong> &bull; 
+                <span class="badge bg-light text-dark border"><?= e($currentEvent['academic_year']) ?></span>
+            <?php else: ?>
+                Select an event to upload and manage photographs.
+            <?php endif; ?>
+        </p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="../events/index.php<?= $currentEvent ? '?session_id=' . (int)$currentEvent['session_id'] : '' ?>" class="btn btn-outline-secondary btn-sm">
+            <i class="fa-solid fa-arrow-left me-1"></i> Back to Events
+        </a>
     </div>
 </div>
 

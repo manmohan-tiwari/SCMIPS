@@ -1,6 +1,6 @@
 <?php
 /**
- * SCMIPS Gallery Admin Panel - Reusable Header & Navigation Bar
+ * SCMIPS Gallery Admin Panel - Reusable Modern Header & Sidebar Navigation
  */
 
 // Set HTTP Security Headers
@@ -16,8 +16,8 @@ $currentDir = basename(dirname($_SERVER['PHP_SELF']));
 $adminPath = ($currentDir === 'admin') ? '' : '../';
 $publicPath = ($currentDir === 'admin') ? '../' : '../../';
 
-$pageTitle = $pageTitle ?? 'SCMIPS Admin Panel';
-$activePage = $activePage ?? '';
+$pageTitle = $pageTitle ?? 'Dashboard';
+$activePage = $activePage ?? 'dashboard';
 
 $flashes = get_flashes();
 ?>
@@ -32,61 +32,136 @@ $flashes = get_flashes();
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-    <!-- Custom Admin Styles -->
+    <!-- Custom Admin Styles (Nexa Modern Theme) -->
     <link href="<?= $adminPath ?>assets/css/admin.css" rel="stylesheet">
 </head>
 <body>
 
-<!-- Main Admin Navigation -->
-<nav class="navbar navbar-expand-lg navbar-dark navbar-admin sticky-top">
-    <div class="container-fluid px-4">
-        <a class="navbar-brand d-flex align-items-center" href="<?= $adminPath ?>dashboard.php">
-            <i class="fa-solid fa-graduation-cap me-2 fa-lg text-warning"></i>
-            <span>SCMIPS</span>&nbsp;Admin
-        </a>
+<div class="admin-wrapper">
+    <!-- Left Sidebar Navigation -->
+    <aside class="admin-sidebar" id="adminSidebar">
+        <!-- Top Brand Header (Dark Charcoal) -->
+        <div class="sidebar-brand">
+            <a href="<?= $adminPath ?>dashboard.php" class="brand-link">
+                <span>SCMIPS</span><span class="brand-dot">•</span>
+            </a>
+        </div>
 
-        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#adminNavbar" 
-                aria-controls="adminNavbar" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+        <!-- User Profile Card (Rich Amber Yellow) -->
+        <div class="sidebar-user-card">
+            <div class="user-avatar-wrap">
+                <i class="fa-solid fa-user-tie user-avatar-icon"></i>
+            </div>
+            <div class="user-info">
+                <div class="user-name"><?= e($_SESSION['admin_name'] ?? 'Admin') ?></div>
+                <div class="user-role"><?= e($_SESSION['admin_username'] ?? 'admin') ?>@scmips.in</div>
+            </div>
+            <a href="<?= $adminPath ?>profile.php" class="user-action-btn" title="Edit Profile & Password">
+                <i class="fa-solid fa-chevron-down"></i>
+            </a>
+        </div>
 
-        <div class="collapse navbar-collapse" id="adminNavbar">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
-                <li class="nav-item">
-                    <a class="nav-link <?= ($activePage === 'dashboard') ? 'active' : '' ?>" href="<?= $adminPath ?>dashboard.php">
-                        <i class="fa-solid fa-gauge me-1"></i> Dashboard
+        <!-- Sidebar Menu Items -->
+        <div class="sidebar-menu-wrap">
+            <div class="sidebar-heading">MAIN NAVIGATION</div>
+            <ul class="sidebar-nav">
+                <li class="sidebar-item">
+                    <a href="<?= $adminPath ?>dashboard.php" class="sidebar-link <?= ($activePage === 'dashboard') ? 'active' : '' ?>">
+                        <i class="fa-solid fa-house"></i>
+                        <span>Dashboard</span>
+                        <i class="fa-solid fa-chevron-right item-arrow"></i>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link <?= ($activePage === 'sessions') ? 'active' : '' ?>" href="<?= $adminPath ?>sessions/index.php">
-                        <i class="fa-solid fa-calendar-days me-1"></i> Sessions
+                <li class="sidebar-item">
+                    <a href="<?= $adminPath ?>sessions/index.php" class="sidebar-link <?= ($activePage === 'sessions') ? 'active' : '' ?>">
+                        <i class="fa-solid fa-calendar-days"></i>
+                        <span>Academic Sessions</span>
+                        <i class="fa-solid fa-chevron-right item-arrow"></i>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link <?= ($activePage === 'events') ? 'active' : '' ?>" href="<?= $adminPath ?>events/index.php">
-                        <i class="fa-solid fa-calendar-check me-1"></i> Events
+                <li class="sidebar-item">
+                    <a href="<?= $adminPath ?>events/index.php" class="sidebar-link <?= ($activePage === 'events') ? 'active' : '' ?>">
+                        <i class="fa-solid fa-calendar-check"></i>
+                        <span>Events</span>
+                        <i class="fa-solid fa-chevron-right item-arrow"></i>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link <?= ($activePage === 'upload') ? 'active' : '' ?>" href="<?= $adminPath ?>images/upload.php">
-                        <i class="fa-solid fa-cloud-arrow-up me-1"></i> Upload Photos
+                <li class="sidebar-item">
+                    <a href="<?= $adminPath ?>images/upload.php" class="sidebar-link <?= ($activePage === 'upload') ? 'active' : '' ?>">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <span>Upload Photos</span>
+                        <i class="fa-solid fa-chevron-right item-arrow"></i>
                     </a>
                 </li>
             </ul>
 
-            <ul class="navbar-nav ms-auto align-items-center">
-                <li class="nav-item me-2">
-                    <a class="btn btn-sm btn-outline-light" href="<?= $publicPath ?>" target="_blank" title="View Public Website">
-                        <i class="fa-solid fa-arrow-up-right-from-square me-1"></i> View Website
+            <div class="sidebar-heading">SYSTEM & ACCOUNT</div>
+            <ul class="sidebar-nav">
+                <li class="sidebar-item">
+                    <a href="<?= $adminPath ?>profile.php" class="sidebar-link <?= ($activePage === 'profile') ? 'active' : '' ?>">
+                        <i class="fa-solid fa-user-gear"></i>
+                        <span>Profile & Security</span>
+                        <i class="fa-solid fa-chevron-right item-arrow"></i>
                     </a>
                 </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center text-white" href="#" id="adminUserDropdown" 
-                       role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fa-solid fa-circle-user fa-lg me-2 text-warning"></i>
-                        <span><?= e($_SESSION['admin_name'] ?? 'Admin') ?></span>
+                <li class="sidebar-item">
+                    <a href="<?= $adminPath ?>health.php" class="sidebar-link" target="_blank">
+                        <i class="fa-solid fa-heart-pulse text-success"></i>
+                        <span>System Health</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square item-arrow"></i>
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="adminUserDropdown">
+                </li>
+                <li class="sidebar-item">
+                    <a href="<?= $publicPath ?>" class="sidebar-link" target="_blank">
+                        <i class="fa-solid fa-globe text-primary"></i>
+                        <span>View Public Website</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square item-arrow"></i>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="<?= $adminPath ?>logout.php" class="sidebar-link text-danger">
+                        <i class="fa-solid fa-power-off text-danger"></i>
+                        <span>Log Out</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </aside>
+
+    <!-- Mobile Overlay Backdrop -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Main Content Area -->
+    <div class="admin-main">
+        <!-- Top Navbar Header -->
+        <header class="admin-topbar">
+            <div class="topbar-left">
+                <button type="button" class="topbar-btn" id="sidebarToggle" title="Toggle Sidebar">
+                    <i class="fa-solid fa-bars-staggered"></i>
+                </button>
+                <a href="<?= $publicPath ?>" target="_blank" class="topbar-link d-none d-md-flex align-items-center" title="Open Public Website">
+                    <i class="fa-solid fa-globe me-1 text-primary"></i>
+                    <span>Public Website</span>
+                </a>
+                <a href="<?= $adminPath ?>health.php" target="_blank" class="topbar-link d-none d-lg-flex align-items-center" title="Check System Health">
+                    <i class="fa-solid fa-circle-check me-1 text-success"></i>
+                    <span>System Healthy</span>
+                </a>
+            </div>
+
+            <div class="topbar-right">
+                <a href="<?= $adminPath ?>images/upload.php" class="topbar-btn" title="Upload Photos">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                </a>
+                <div class="dropdown">
+                    <button class="topbar-user-btn" type="button" id="topUserDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div class="topbar-avatar">
+                            <i class="fa-solid fa-circle-user"></i>
+                        </div>
+                        <span class="d-none d-md-inline fw-semibold text-dark"><?= e($_SESSION['admin_name'] ?? 'Admin') ?></span>
+                        <i class="fa-solid fa-chevron-down small text-muted ms-1"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="topUserDropdown">
                         <li>
                             <h6 class="dropdown-header small text-muted">
                                 Signed in as <strong><?= e($_SESSION['admin_username'] ?? 'admin') ?></strong>
@@ -94,8 +169,13 @@ $flashes = get_flashes();
                         </li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
-                            <a class="dropdown-item <?= ($activePage === 'profile') ? 'active' : '' ?>" href="<?= $adminPath ?>profile.php">
+                            <a class="dropdown-item" href="<?= $adminPath ?>profile.php">
                                 <i class="fa-solid fa-user-gear me-2"></i> Profile & Password
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="<?= $adminPath ?>health.php" target="_blank">
+                                <i class="fa-solid fa-heart-pulse me-2"></i> System Diagnostics
                             </a>
                         </li>
                         <li><hr class="dropdown-divider"></li>
@@ -105,32 +185,53 @@ $flashes = get_flashes();
                             </a>
                         </li>
                     </ul>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
+                </div>
+                <a href="<?= $adminPath ?>logout.php" class="topbar-btn text-danger ms-1" title="Log Out">
+                    <i class="fa-solid fa-power-off"></i>
+                </a>
+            </div>
+        </header>
 
-<!-- Main Admin Content Container -->
-<main class="container-fluid px-4 py-4 flex-grow-1">
-    <?php if (!empty($flashes)): ?>
-        <div class="row">
-            <div class="col-12">
-                <?php foreach ($flashes as $flash): ?>
-                    <div class="alert alert-<?= e($flash['type']) ?> alert-dismissible fade show shadow-sm" role="alert">
-                        <?php if ($flash['type'] === 'success'): ?>
-                            <i class="fa-solid fa-circle-check me-1"></i>
-                        <?php elseif ($flash['type'] === 'danger'): ?>
-                            <i class="fa-solid fa-triangle-exclamation me-1"></i>
-                        <?php elseif ($flash['type'] === 'warning'): ?>
-                            <i class="fa-solid fa-circle-exclamation me-1"></i>
-                        <?php else: ?>
-                            <i class="fa-solid fa-circle-info me-1"></i>
-                        <?php endif; ?>
-                        <?= e($flash['message']) ?>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                <?php endforeach; ?>
+        <!-- Sub-Header / Breadcrumb -->
+        <div class="admin-page-header">
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <div>
+                    <h2 class="page-title"><?= e($pageTitle) ?></h2>
+                    <p class="page-subtitle">Welcome to SCMIPS Administration</p>
+                </div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="<?= $adminPath ?>dashboard.php">
+                                <i class="fa-solid fa-house me-1"></i> SCMIPS
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page"><?= e($pageTitle) ?></li>
+                    </ol>
+                </nav>
             </div>
         </div>
-    <?php endif; ?>
+
+        <!-- Main Body Content -->
+        <main class="admin-content-body">
+            <?php if (!empty($flashes)): ?>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <?php foreach ($flashes as $flash): ?>
+                            <div class="alert alert-<?= e($flash['type']) ?> alert-dismissible fade show shadow-sm" role="alert">
+                                <?php if ($flash['type'] === 'success'): ?>
+                                    <i class="fa-solid fa-circle-check me-1"></i>
+                                <?php elseif ($flash['type'] === 'danger'): ?>
+                                    <i class="fa-solid fa-triangle-exclamation me-1"></i>
+                                <?php elseif ($flash['type'] === 'warning'): ?>
+                                    <i class="fa-solid fa-circle-exclamation me-1"></i>
+                                <?php else: ?>
+                                    <i class="fa-solid fa-circle-info me-1"></i>
+                                <?php endif; ?>
+                                <?= e($flash['message']) ?>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            <?php endif; ?>

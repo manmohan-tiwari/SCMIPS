@@ -74,11 +74,13 @@ $flashes = get_flashes();
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --brand-primary: #021371;
-            --brand-secondary: #f1a238;
+            --brand-dark: #2b303a;
+            --brand-yellow: #f1a238;
+            --brand-yellow-hover: #e0942b;
         }
         body {
-            background: linear-gradient(135deg, #021371 0%, #0d2a95 100%);
+            background-color: #2b303a;
+            background-image: radial-gradient(circle at 50% 30%, rgba(241, 162, 56, 0.15) 0%, rgba(43, 48, 58, 0.95) 70%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -89,66 +91,68 @@ $flashes = get_flashes();
         }
         .login-card {
             background: #ffffff;
-            border-radius: 16px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+            border-radius: 14px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
             width: 100%;
-            max-width: 440px;
+            max-width: 420px;
             overflow: hidden;
-            border: none;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         .login-header {
             background-color: #ffffff;
-            padding: 30px 30px 10px 30px;
+            padding: 32px 30px 15px 30px;
             text-align: center;
-            border-bottom: 1px solid #f0f0f0;
+            border-bottom: 1px solid #f0f2f5;
         }
         .login-header h2 {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--brand-primary);
+            font-size: 1.45rem;
+            font-weight: 800;
+            color: var(--brand-dark);
             margin-top: 10px;
-            margin-bottom: 2px;
+            margin-bottom: 3px;
+            letter-spacing: -0.3px;
         }
         .login-header p {
-            color: #6c757d;
-            font-size: 0.85rem;
+            color: #8a92a6;
+            font-size: 0.82rem;
             margin-bottom: 0;
         }
         .login-body {
-            padding: 30px;
+            padding: 28px 30px;
         }
         .btn-brand {
-            background-color: var(--brand-secondary);
-            border-color: var(--brand-secondary);
-            color: #212529;
-            font-weight: 600;
+            background-color: var(--brand-yellow);
+            border-color: var(--brand-yellow);
+            color: #242930;
+            font-weight: 700;
             padding: 11px;
+            border-radius: 8px;
             transition: all 0.2s ease-in-out;
         }
         .btn-brand:hover {
-            background-color: #df9127;
-            border-color: #df9127;
-            color: #111;
+            background-color: var(--brand-yellow-hover);
+            border-color: var(--brand-yellow-hover);
+            color: #1a1e24;
         }
         .form-control:focus {
-            border-color: var(--brand-primary);
-            box-shadow: 0 0 0 0.2rem rgba(2, 19, 113, 0.15);
+            border-color: var(--brand-yellow);
+            box-shadow: 0 0 0 0.2rem rgba(241, 162, 56, 0.25);
         }
         .input-group-text {
             background-color: #f8f9fa;
             border-right: none;
-            color: #6c757d;
+            color: #8a92a6;
         }
         .form-control-with-icon {
             border-left: none;
         }
         .login-footer {
             background-color: #fafbfc;
-            padding: 15px 30px;
+            padding: 14px 30px;
             text-align: center;
             font-size: 0.8rem;
-            color: #6c757d;
-            border-top: 1px solid #f0f0f0;
+            color: #8a92a6;
+            border-top: 1px solid #f0f2f5;
         }
     </style>
 </head>
@@ -156,10 +160,10 @@ $flashes = get_flashes();
 
 <div class="login-card">
     <div class="login-header">
-        <div class="d-inline-flex align-items-center justify-content-center bg-light rounded-circle p-3 mb-2" style="width: 60px; height: 60px;">
-            <i class="fa-solid fa-images fa-xl" style="color: var(--brand-primary);"></i>
+        <div class="d-inline-flex align-items-center justify-content-center bg-warning bg-opacity-10 rounded-circle p-3 mb-2" style="width: 58px; height: 58px;">
+            <i class="fa-solid fa-graduation-cap fa-xl text-warning"></i>
         </div>
-        <h2>SCMIPS Admin Panel</h2>
+        <h2>SCMIPS<span style="color: var(--brand-yellow);">.</span> Admin</h2>
         <p>Shri Cloth Market Institute of Professional Studies</p>
     </div>
 

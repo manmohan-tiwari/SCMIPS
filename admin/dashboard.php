@@ -1,6 +1,7 @@
 <?php
 /**
- * SCMIPS Gallery Admin Panel - Administrator Dashboard (Phase 6)
+ * SCMIPS Gallery Admin Panel - Administrator Dashboard
+ * Modern Nexa-Inspired Layout & Color Palette
  */
 
 require_once __DIR__ . '/includes/auth.php';
@@ -49,111 +50,200 @@ try {
 require_once __DIR__ . '/includes/header.php';
 ?>
 
-<!-- Dashboard Welcome Header -->
-<div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-4 gap-3">
+<!-- Action Bar / Quick Actions Header -->
+<div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
     <div>
-        <h1 class="h3 mb-1 text-gray-800 fw-bold" style="color: var(--brand-primary);">
-            Welcome, <?= e($_SESSION['admin_name'] ?? 'Administrator') ?>!
-        </h1>
-        <p class="text-muted mb-0 small">
-            Manage academic sessions, events, and gallery photographs for the SCMIPS public website.
-        </p>
+        <h4 class="fw-bold mb-0 text-dark">
+            Overview &amp; Statistics
+        </h4>
+        <span class="text-muted small">Real-time gallery metrics &amp; session status</span>
     </div>
     <div class="d-flex flex-wrap gap-2">
-        <a href="sessions/create.php" class="btn btn-sm btn-brand-primary shadow-sm">
-            <i class="fa-solid fa-plus me-1"></i> New Session
+        <a href="sessions/create.php" class="btn btn-sm btn-outline-secondary bg-white shadow-sm">
+            <i class="fa-solid fa-plus me-1 text-primary"></i> New Session
         </a>
-        <a href="events/create.php" class="btn btn-sm btn-brand-secondary shadow-sm">
-            <i class="fa-solid fa-calendar-plus me-1"></i> New Event
+        <a href="events/create.php" class="btn btn-sm btn-outline-secondary bg-white shadow-sm">
+            <i class="fa-solid fa-calendar-plus me-1 text-warning"></i> New Event
         </a>
-        <a href="images/upload.php" class="btn btn-sm btn-outline-primary shadow-sm">
+        <a href="images/upload.php" class="btn btn-sm btn-warning shadow-sm">
             <i class="fa-solid fa-cloud-arrow-up me-1"></i> Upload Photos
         </a>
     </div>
 </div>
 
-<!-- Stat Metric Cards -->
+<!-- ========================================================================
+     ROW 1: Top 4 Circular Donut Gauge Cards (Nexa Top Row Design)
+     ======================================================================== -->
 <div class="row g-3 mb-4">
-    <!-- Academic Sessions -->
-    <div class="col-12 col-sm-6 col-xl-4">
-        <div class="card stat-card stat-sessions h-100 shadow-sm">
-            <div class="card-body p-3 d-flex align-items-center justify-content-between">
-                <div>
-                    <div class="text-muted small text-uppercase fw-bold mb-1">Academic Sessions</div>
-                    <div class="h2 mb-0 fw-bold" style="color: var(--brand-primary);"><?= $sessionsCount ?></div>
-                </div>
-                <div class="stat-icon bg-primary bg-opacity-10 text-primary">
-                    <i class="fa-solid fa-calendar-days"></i>
-                </div>
+    <!-- Card 1: Academic Sessions (Teal) -->
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="gauge-card">
+            <div class="gauge-circle teal">
+                <span class="gauge-number"><?= $sessionsCount ?></span>
             </div>
-            <div class="card-footer bg-transparent border-0 pt-0 pb-3">
-                <a href="sessions/index.php" class="small text-decoration-none fw-semibold" style="color: var(--brand-primary);">
-                    Manage Sessions &rarr;
-                </a>
+            <div class="gauge-title">Academic Sessions</div>
+            <div class="gauge-subtitle">
+                <span class="text-success"><i class="fa-solid fa-arrow-trend-up"></i> Active Years</span>
             </div>
-        </div>
-    </div>
-
-    <!-- Gallery Events -->
-    <div class="col-12 col-sm-6 col-xl-4">
-        <div class="card stat-card stat-events h-100 shadow-sm">
-            <div class="card-body p-3 d-flex align-items-center justify-content-between">
-                <div>
-                    <div class="text-muted small text-uppercase fw-bold mb-1">Total Events</div>
-                    <div class="h2 mb-1 fw-bold" style="color: #c77e1c;"><?= $eventsTotal ?></div>
-                    <div class="small text-muted">
-                        <span class="text-success fw-semibold"><?= $eventsPublished ?> published</span> &bull; 
-                        <span class="text-secondary"><?= $eventsDraft ?> draft</span>
-                    </div>
-                </div>
-                <div class="stat-icon bg-warning bg-opacity-10 text-warning">
-                    <i class="fa-solid fa-calendar-check"></i>
-                </div>
-            </div>
-            <div class="card-footer bg-transparent border-0 pt-0 pb-3">
-                <a href="events/index.php" class="small text-decoration-none fw-semibold" style="color: #c77e1c;">
-                    Manage Events &rarr;
-                </a>
+            <div class="mini-bars">
+                <span class="mini-bar teal" style="height: 6px;"></span>
+                <span class="mini-bar teal" style="height: 12px;"></span>
+                <span class="mini-bar teal" style="height: 9px;"></span>
+                <span class="mini-bar teal" style="height: 16px;"></span>
+                <span class="mini-bar teal" style="height: 11px;"></span>
+                <span class="mini-bar teal" style="height: 18px;"></span>
             </div>
         </div>
     </div>
 
-    <!-- Gallery Images -->
-    <div class="col-12 col-sm-6 col-xl-4">
-        <div class="card stat-card stat-images h-100 shadow-sm">
-            <div class="card-body p-3 d-flex align-items-center justify-content-between">
-                <div>
-                    <div class="text-muted small text-uppercase fw-bold mb-1">Gallery Photographs</div>
-                    <div class="h2 mb-0 fw-bold text-success"><?= $imagesCount ?></div>
-                </div>
-                <div class="stat-icon bg-success bg-opacity-10 text-success">
-                    <i class="fa-solid fa-images"></i>
-                </div>
+    <!-- Card 2: Campus Events (Orange) -->
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="gauge-card">
+            <div class="gauge-circle orange">
+                <span class="gauge-number"><?= $eventsTotal ?></span>
             </div>
-            <div class="card-footer bg-transparent border-0 pt-0 pb-3">
-                <a href="images/upload.php" class="small text-decoration-none fw-semibold text-success">
-                    Upload Photos &rarr;
-                </a>
+            <div class="gauge-title">Campus Events</div>
+            <div class="gauge-subtitle">
+                <span class="text-warning"><i class="fa-solid fa-calendar-check"></i> Total Registered</span>
+            </div>
+            <div class="mini-bars">
+                <span class="mini-bar orange" style="height: 8px;"></span>
+                <span class="mini-bar orange" style="height: 14px;"></span>
+                <span class="mini-bar orange" style="height: 10px;"></span>
+                <span class="mini-bar orange" style="height: 17px;"></span>
+                <span class="mini-bar orange" style="height: 13px;"></span>
+                <span class="mini-bar orange" style="height: 15px;"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 3: Published Events (Green) -->
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="gauge-card">
+            <div class="gauge-circle green">
+                <span class="gauge-number"><?= $eventsPublished ?></span>
+            </div>
+            <div class="gauge-title">Published Events</div>
+            <div class="gauge-subtitle">
+                <span class="text-success"><i class="fa-solid fa-circle-check"></i> Live on Public Site</span>
+            </div>
+            <div class="mini-bars">
+                <span class="mini-bar green" style="height: 7px;"></span>
+                <span class="mini-bar green" style="height: 11px;"></span>
+                <span class="mini-bar green" style="height: 15px;"></span>
+                <span class="mini-bar green" style="height: 18px;"></span>
+                <span class="mini-bar green" style="height: 14px;"></span>
+                <span class="mini-bar green" style="height: 16px;"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 4: Total Photos (Blue) -->
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="gauge-card">
+            <div class="gauge-circle blue">
+                <span class="gauge-number"><?= $imagesCount ?></span>
+            </div>
+            <div class="gauge-title">Gallery Photos</div>
+            <div class="gauge-subtitle">
+                <span class="text-info"><i class="fa-solid fa-images"></i> Total Stored</span>
+            </div>
+            <div class="mini-bars">
+                <span class="mini-bar blue" style="height: 9px;"></span>
+                <span class="mini-bar blue" style="height: 13px;"></span>
+                <span class="mini-bar blue" style="height: 11px;"></span>
+                <span class="mini-bar blue" style="height: 16px;"></span>
+                <span class="mini-bar blue" style="height: 14px;"></span>
+                <span class="mini-bar blue" style="height: 18px;"></span>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Recent Events & Quick Guidance -->
+<!-- ========================================================================
+     ROW 2: Quick Metric Strip (Nexa Middle Row Design)
+     ======================================================================== -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-4 col-xl-2">
+        <div class="quick-stat-box shadow-sm">
+            <div class="quick-stat-icon text-warning">
+                <i class="fa-solid fa-graduation-cap"></i>
+            </div>
+            <div class="quick-stat-num"><?= $sessionsCount ?></div>
+            <div class="quick-stat-label">Academic Sessions</div>
+        </div>
+    </div>
+
+    <div class="col-6 col-md-4 col-xl-2">
+        <div class="quick-stat-box shadow-sm">
+            <div class="quick-stat-icon text-primary">
+                <i class="fa-solid fa-calendar-check"></i>
+            </div>
+            <div class="quick-stat-num"><?= $eventsTotal ?></div>
+            <div class="quick-stat-label">Total Events</div>
+        </div>
+    </div>
+
+    <div class="col-6 col-md-4 col-xl-2">
+        <div class="quick-stat-box shadow-sm">
+            <div class="quick-stat-icon text-danger">
+                <i class="fa-solid fa-eye"></i>
+            </div>
+            <div class="quick-stat-num"><?= $eventsPublished ?></div>
+            <div class="quick-stat-label">Live Published</div>
+        </div>
+    </div>
+
+    <div class="col-6 col-md-4 col-xl-2">
+        <div class="quick-stat-box shadow-sm">
+            <div class="quick-stat-icon text-success">
+                <i class="fa-solid fa-camera-retro"></i>
+            </div>
+            <div class="quick-stat-num"><?= $imagesCount ?></div>
+            <div class="quick-stat-label">Gallery Photos</div>
+        </div>
+    </div>
+
+    <div class="col-6 col-md-4 col-xl-2">
+        <div class="quick-stat-box shadow-sm">
+            <div class="quick-stat-icon text-info">
+                <i class="fa-solid fa-user-shield"></i>
+            </div>
+            <div class="quick-stat-num">1</div>
+            <div class="quick-stat-label">Active Admin</div>
+        </div>
+    </div>
+
+    <div class="col-6 col-md-4 col-xl-2">
+        <div class="quick-stat-box shadow-sm">
+            <div class="quick-stat-icon text-warning">
+                <i class="fa-solid fa-database"></i>
+            </div>
+            <div class="quick-stat-num">MySQL</div>
+            <div class="quick-stat-label">PDO Connected</div>
+        </div>
+    </div>
+</div>
+
+<!-- ========================================================================
+     ROW 3: Recent Events Table & System Overview
+     ======================================================================== -->
 <div class="row g-4">
-    <!-- Recent Events Table -->
+    <!-- Left: Recently Added Events Table -->
     <div class="col-lg-8">
         <div class="card shadow-sm h-100">
-            <div class="card-header d-flex align-items-center justify-content-between">
-                <span class="fw-bold"><i class="fa-solid fa-clock-rotate-left me-1 text-primary"></i> Recently Added Events</span>
-                <a href="events/index.php" class="btn btn-sm btn-outline-secondary">View All</a>
+            <div class="card-header">
+                <span>
+                    <i class="fa-solid fa-clock-rotate-left me-1 text-primary"></i> Recently Added Events
+                </span>
+                <a href="events/index.php" class="btn btn-sm btn-outline-secondary py-1 px-2">View All</a>
             </div>
             <div class="card-body p-0">
                 <?php if (empty($recentEvents)): ?>
                     <div class="text-center py-5 text-muted">
                         <i class="fa-regular fa-calendar-xmark fa-2xl mb-3 text-secondary"></i>
                         <p class="mb-2">No events created yet.</p>
-                        <a href="events/create.php" class="btn btn-sm btn-brand-primary">
+                        <a href="events/create.php" class="btn btn-sm btn-primary">
                             <i class="fa-solid fa-plus me-1"></i> Create Your First Event
                         </a>
                     </div>
@@ -185,10 +275,10 @@ require_once __DIR__ . '/includes/header.php';
                                             <?php endif; ?>
                                         </td>
                                         <td class="text-end">
-                                            <a href="images/upload.php?event_id=<?= (int)$ev['id'] ?>" class="btn btn-sm btn-outline-primary" title="Upload Photos">
+                                            <a href="images/upload.php?event_id=<?= (int)$ev['id'] ?>" class="btn btn-sm btn-outline-primary py-1 px-2" title="Upload Photos">
                                                 <i class="fa-solid fa-upload"></i>
                                             </a>
-                                            <a href="events/edit.php?id=<?= (int)$ev['id'] ?>" class="btn btn-sm btn-outline-secondary" title="Edit Event">
+                                            <a href="events/edit.php?id=<?= (int)$ev['id'] ?>" class="btn btn-sm btn-outline-secondary py-1 px-2" title="Edit Event">
                                                 <i class="fa-solid fa-pen"></i>
                                             </a>
                                         </td>
@@ -202,51 +292,59 @@ require_once __DIR__ . '/includes/header.php';
         </div>
     </div>
 
-    <!-- Quick Help & System Notes -->
+    <!-- Right: Quick Help & Security Status -->
     <div class="col-lg-4">
         <div class="card shadow-sm mb-4">
-            <div class="card-header fw-bold">
-                <i class="fa-solid fa-lightbulb me-1 text-warning"></i> Quick Workflow Guide
+            <div class="card-header">
+                <span>
+                    <i class="fa-solid fa-bolt me-1 text-warning"></i> Quick Actions
+                </span>
             </div>
-            <div class="card-body small">
-                <ol class="ps-3 mb-0">
-                    <li class="mb-2">
-                        <strong>Academic Sessions:</strong> Create an academic year (e.g. <code>2024-2025</code>) to group annual activities.
-                    </li>
-                    <li class="mb-2">
-                        <strong>Events:</strong> Add specific college events (e.g. <em>Annual Sports Day</em>, <em>Induction Program</em>) under a session.
-                    </li>
-                    <li class="mb-2">
-                        <strong>Upload Photos:</strong> Multi-select image files to instantly upload them to an event with preview.
-                    </li>
-                    <li>
-                        <strong>Publish:</strong> Toggle the event status to published when ready for public display.
-                    </li>
-                </ol>
+            <div class="card-body p-3">
+                <div class="d-grid gap-2">
+                    <a href="images/upload.php" class="btn btn-warning text-dark fw-bold text-start d-flex align-items-center justify-content-between">
+                        <span><i class="fa-solid fa-cloud-arrow-up me-2"></i> Upload Photos</span>
+                        <i class="fa-solid fa-chevron-right small"></i>
+                    </a>
+                    <a href="events/create.php" class="btn btn-outline-secondary text-start d-flex align-items-center justify-content-between bg-light">
+                        <span><i class="fa-solid fa-calendar-plus me-2 text-primary"></i> Create New Event</span>
+                        <i class="fa-solid fa-chevron-right small"></i>
+                    </a>
+                    <a href="sessions/create.php" class="btn btn-outline-secondary text-start d-flex align-items-center justify-content-between bg-light">
+                        <span><i class="fa-solid fa-plus me-2 text-success"></i> Add Academic Session</span>
+                        <i class="fa-solid fa-chevron-right small"></i>
+                    </a>
+                    <a href="<?= $publicPath ?>" target="_blank" class="btn btn-outline-secondary text-start d-flex align-items-center justify-content-between bg-light">
+                        <span><i class="fa-solid fa-globe me-2 text-info"></i> View Public Gallery</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square small"></i>
+                    </a>
+                </div>
             </div>
         </div>
 
         <div class="card shadow-sm">
-            <div class="card-header fw-bold">
-                <i class="fa-solid fa-shield-halved me-1 text-success"></i> Security Status
+            <div class="card-header">
+                <span>
+                    <i class="fa-solid fa-shield-halved me-1 text-success"></i> System Status
+                </span>
             </div>
-            <div class="card-body small">
+            <div class="card-body small p-3">
                 <ul class="list-unstyled mb-0">
-                    <li class="mb-2">
-                        <i class="fa-solid fa-circle-check text-success me-1"></i>
-                        <strong>PDO Prepared Queries:</strong> Real prepared statements active.
+                    <li class="mb-2 d-flex align-items-center justify-content-between">
+                        <span><i class="fa-solid fa-circle-check text-success me-1"></i> Database</span>
+                        <span class="badge bg-success bg-opacity-10 text-success fw-bold">Connected</span>
                     </li>
-                    <li class="mb-2">
-                        <i class="fa-solid fa-circle-check text-success me-1"></i>
-                        <strong>CSRF Protection:</strong> All form submissions validated.
+                    <li class="mb-2 d-flex align-items-center justify-content-between">
+                        <span><i class="fa-solid fa-circle-check text-success me-1"></i> CSRF Defense</span>
+                        <span class="badge bg-success bg-opacity-10 text-success fw-bold">Active</span>
                     </li>
-                    <li class="mb-2">
-                        <i class="fa-solid fa-circle-check text-success me-1"></i>
-                        <strong>Script Execution Block:</strong> <code>.htaccess</code> &amp; <code>web.config</code> in uploads.
+                    <li class="mb-2 d-flex align-items-center justify-content-between">
+                        <span><i class="fa-solid fa-circle-check text-success me-1"></i> Upload Protection</span>
+                        <span class="badge bg-success bg-opacity-10 text-success fw-bold">Secured</span>
                     </li>
-                    <li>
-                        <i class="fa-solid fa-circle-check text-success me-1"></i>
-                        <strong>Health Diagnostics:</strong> <a href="health.php" target="_blank">Run health check &rarr;</a>
+                    <li class="d-flex align-items-center justify-content-between pt-2 border-top">
+                        <span><i class="fa-solid fa-heart-pulse text-info me-1"></i> Diagnostics</span>
+                        <a href="health.php" target="_blank" class="text-decoration-none fw-semibold">View Health &rarr;</a>
                     </li>
                 </ul>
             </div>

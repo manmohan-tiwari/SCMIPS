@@ -52,16 +52,15 @@ try {
 require_once __DIR__ . '/../includes/header.php';
 ?>
 
-<!-- Page Header & Action Controls -->
-<div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-4 gap-3">
+<!-- Action Controls -->
+<div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
     <div>
-        <h1 class="h3 mb-1 fw-bold" style="color: var(--brand-primary);">Gallery Events</h1>
         <p class="text-muted mb-0 small">
             Manage specific events, functions, and photographic albums within academic sessions.
         </p>
     </div>
     <div class="d-flex gap-2">
-        <a href="create.php<?= $selectedSessionId > 0 ? '?session_id=' . $selectedSessionId : '' ?>" class="btn btn-brand-primary shadow-sm">
+        <a href="create.php<?= $selectedSessionId > 0 ? '?session_id=' . $selectedSessionId : '' ?>" class="btn btn-warning shadow-sm">
             <i class="fa-solid fa-plus me-1"></i> Add Event
         </a>
     </div>
