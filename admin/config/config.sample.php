@@ -14,7 +14,7 @@ defined('APP_ROOT') or define('APP_ROOT', dirname(__DIR__));
 
 // Database Configuration
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'scmips_db');
+define('DB_NAME', 'scmips_gallery_admin');
 define('DB_USER', 'root');
 define('DB_PASS', '');
 define('DB_CHARSET', 'utf8mb4');

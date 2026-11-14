@@ -3,11 +3,11 @@
 -- Database: scmips_db
 -- ============================================================================
 
-CREATE DATABASE IF NOT EXISTS `scmips_db` 
+CREATE DATABASE IF NOT EXISTS `scmips_gallery_admin` 
     DEFAULT CHARACTER SET utf8mb4 
     COLLATE utf8mb4_unicode_ci;
 
-USE `scmips_db`;
+USE `scmips_gallery_admin`;
 
 -- 1. Admins Table
 CREATE TABLE IF NOT EXISTS `admins` (
