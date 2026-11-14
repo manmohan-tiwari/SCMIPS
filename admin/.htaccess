@@ -1,0 +1,16 @@
+# SCMIPS Admin Security Configuration
+Options -Indexes
+
+# Block sensitive extensions
+<FilesMatch "\.(sql|log|ini|bak|swp|md|json)$">
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>
+
+# Security Headers (Apache mod_headers if loaded)
+<IfModule mod_headers.c>
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>

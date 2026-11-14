@@ -1,0 +1,3 @@
+# Deny all direct web requests to config files
+Order Deny,Allow
+Deny from all

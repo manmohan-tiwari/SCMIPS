@@ -1,0 +1,18 @@
+# SCMIPS Root Directory Security Rules
+# 1. Disable Directory Index Browsing
+Options -Indexes
+
+# 2. Block direct access to hidden files and dotfiles (.git, .env, etc.)
+<FilesMatch "^\.">
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>
+
+# 3. Block sensitive documentation and data files from public web access
+<FilesMatch "\.(sql|log|ini|sh|bak|swp|md)$">
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>
+
+# 4. Default Character Set
+AddDefaultCharset UTF-8

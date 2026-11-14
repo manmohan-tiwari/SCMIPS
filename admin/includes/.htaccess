@@ -1,0 +1,3 @@
+# Deny direct browser access to admin internal includes
+Order Deny,Allow
+Deny from all
