@@ -1,34 +1,38 @@
-# Environments
-.venv/
-venv/
-ENV/
-env/
+# Reference material (read-only legacy website snapshot)
+reference/
 
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
+# Database configuration (sensitive credentials)
+admin/config/config.php
 
-# Distribution / packaging
-build/
-dist/
-*.egg-info/
+# Uploaded gallery media (preserve directory via .gitkeep)
+admin/uploads/gallery/*
+!admin/uploads/gallery/.gitkeep
 
-# Environment variables
-.env
-.env.*
-!.env.example
+# Windows system files
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
 
-# IDE & Editor settings
+# IDE & Editor files
 .vscode/
 .idea/
 *.swp
 *.swo
 
-# Database
-*.sqlite3
-*.db
+# Temporary PHP sessions, error logs, and backups
+*.log
+error_log
+*.bak
+*.tmp
+
+# Environments & Python legacy
+.venv/
+venv/
+ENV/
+env/
+__pycache__/
 
 # Antigravity artifacts
 .gemini/
+
 

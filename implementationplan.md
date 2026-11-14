@@ -1,680 +1,984 @@
-# SCMIPS Admin Panel --- Learning & Implementation Plan
+# SCMIPS Gallery Admin Panel — Learning & Implementation Plan
+
+---
 
 ## 1. Project Overview
 
-Build a secure, maintainable admin panel for the SCMIPS website. College
-staff should be able to manage academic-year gallery sessions and
-photographs without editing website code.
+We are building a secure, lightweight, and maintainable **Gallery Admin Panel** for the existing **SCMIPS** (Shri Cloth Market Institute of Professional Studies, Indore) website.
 
-This is a **learn-by-building project**: use antigravity as a coding
-assistant, while understanding the architecture, reviewing generated
-code, testing features, and learning the Python/backend concepts behind
-each implementation.
+The primary objective is to empower authorized college staff and administrators to manage academic sessions, events, and gallery photographs dynamically through an intuitive web interface, eliminating the need to manually edit static HTML/PHP files or upload images via raw FTP.
 
-### Primary goals
-
--   Build a reliable gallery management system.
--   Preserve the existing public SCMIPS website and its design.
--   Allow authorized staff to manage gallery sessions and images.
--   Integrate the admin backend with the existing public gallery.
--   Learn practical Python backend engineering skills.
-
-### Scope boundary
-
-Start with gallery management. Keep the architecture modular so that
-other website content-management features can be added later without
-rebuilding the application.
-
-------------------------------------------------------------------------
-
-## 2. Technology Stack
-
-  -----------------------------------------------------------------------
-  Layer                   Technology              Purpose
-  ----------------------- ----------------------- -----------------------
-  Programming language    Python 3.12+            Application language
-
-  Backend framework       FastAPI                 HTTP API and
-                                                  application logic
-
-  Database                PostgreSQL              Persistent application
-                                                  data
-
-  ORM                     SQLAlchemy 2.x          Database models and
-                                                  queries
-
-  Validation              Pydantic                Request and response
-                                                  validation
-
-  Database migrations     Alembic                 Version-controlled
-                                                  schema changes
-
-  Frontend                HTML, CSS, JavaScript   Admin interface
-
-  UI framework            Bootstrap 5             Responsive components
-                                                  and layout
-
-  Templates (if needed)   Jinja2                  Server-rendered HTML
-
-  Image processing        Pillow                  Image decoding,
-                                                  resizing and thumbnails
-
-  Testing                 Pytest                  Unit and integration
-                                                  tests
-
-  Code quality            Ruff                    Linting and formatting
-
-  Containerization        Docker                  Consistent development
-                                                  and deployment
-
-  Web server / ASGI       Uvicorn                 Run the FastAPI
-                                                  application
-
-  Reverse proxy           Nginx                   HTTPS termination and
-                                                  request routing
-
-  Image storage           Cloudflare R2 or Amazon Durable image storage
-                          S3                      
-
-  Version control         Git and GitHub          Source control and
-                                                  collaboration
-
-  CI/CD                   GitHub Actions          Automated checks and
-                                                  deployment workflow
-
-  Optional caching/jobs   Redis; task queue when  Caching and background
-                          needed                  processing
-  -----------------------------------------------------------------------
-
-### Stack decisions
-
--   Use PostgreSQL for a new deployment unless the college's existing
-    infrastructure strongly favors another supported database.
--   Use SQLAlchemy 2.x with Alembic migrations.
--   Start with local image storage during development, but define a
-    storage-service interface so production can use R2 or S3.
--   Do not add Redis, Celery, RabbitMQ, or microservices until a real
-    requirement justifies them.
--   FastAPI does not provide a Django-style built-in admin interface;
-    the custom dashboard is part of this project.
-
-------------------------------------------------------------------------
-
-## 3. Learn-by-Building Workflow
-
-For every module, follow this cycle:
-
-1.  **Learn:** Understand the relevant concept in simple language.
-2.  **Plan:** Identify the feature, data flow, files and acceptance
-    criteria.
-3.  **Prompt Cursor:** Give Cursor a focused task with explicit
-    boundaries.
-4.  **Review:** Read the generated code and understand important
-    functions, classes and dependencies.
-5.  **Run:** Execute the application locally.
-6.  **Test:** Test expected behavior, invalid input and failure cases.
-7.  **Explain:** Be able to explain the implementation without relying
-    on Cursor.
-8.  **Checkpoint:** Complete a short exercise or knowledge check before
-    moving on.
-
-### Cursor usage rules
-
--   Ask Cursor to inspect the existing repository before changing files.
--   Work in small, reviewable tasks rather than asking it to build the
-    entire application at once.
--   Ask it to explain unfamiliar code and design choices.
--   Do not accept unexplained dependencies or unnecessary abstractions.
--   Never paste production secrets, passwords, API keys or hosting
-    credentials into prompts or source control.
--   Review every database migration before applying it.
--   Run tests and inspect the Git diff after each meaningful change.
--   Commit working milestones to Git.
-
-------------------------------------------------------------------------
-
-## 4. Phase 0 --- Discovery and Requirements
-
-**Estimated duration:** 1--2 days
-
-### Tasks
-
--   Inspect the current SCMIPS gallery and public website.
--   Determine whether the current gallery is static HTML or generated
-    dynamically.
--   Inspect available source code and understand how current images are
-    stored and referenced.
--   Confirm who controls the domain, DNS and hosting.
--   Identify the current hosting provider and whether it supports
-    Python/ASGI applications.
--   Confirm whether the existing website can be modified.
--   Determine whether a subdomain such as `admin.scmips.in` can be
-    configured.
--   Confirm expected image formats, maximum file size and approximate
-    gallery volume.
--   Identify the staff members and roles that will use the panel.
--   Decide how existing gallery content will be migrated or preserved.
-
-### Concepts to learn
-
--   Client-server architecture
--   Frontend vs backend
--   HTTP request/response lifecycle
--   Static vs dynamic websites
--   REST API basics
--   DNS, domains and hosting fundamentals
-
-### Deliverables
-
--   Requirements document
--   Feature list and user roles
--   Existing-site integration plan
--   Hosting and deployment decision
--   Initial data model sketch
-
-### Acceptance criteria
-
-Do not begin implementation until the team understands how the existing
-public gallery can receive updated content and where the new application
-can run.
-
-------------------------------------------------------------------------
-
-## 5. Phase 1 --- Python Fundamentals
-
-**Estimated duration:** 5--7 days, adjusted to current knowledge
-
-### Topics
-
--   Variables and built-in data types
--   Lists, tuples, sets and dictionaries
--   Conditions and loops
--   Functions, parameters and return values
--   Scope and reusable modules
--   Object-oriented programming: classes, objects, inheritance and
-    composition
--   Exception handling
--   File handling and JSON
--   Imports and packages
--   Virtual environments and pip
--   Type hints
--   Basic asynchronous programming and `async`/`await`
-
-### Practical exercises
-
--   Write a small student-management program.
--   Create functions to add, update and delete gallery records in
-    memory.
--   Model an `AcademicSession` and `GalleryImage` using Python classes.
--   Read and write JSON data.
--   Validate a filename and handle invalid input.
--   Create and activate a virtual environment.
-
-### Deliverable
-
-A small Python practice project and confidence with the language
-features needed for FastAPI.
-
-------------------------------------------------------------------------
-
-## 6. Phase 2 --- HTTP, REST and FastAPI
-
-**Estimated duration:** 5--7 days
-
-### Topics
-
--   What an API is and why applications use APIs
--   HTTP methods: GET, POST, PUT, PATCH and DELETE
--   Status codes and error responses
--   Headers, query parameters and path parameters
--   JSON request and response bodies
--   REST resource design
--   FastAPI path operations
--   Pydantic request and response schemas
--   Dependency injection
--   OpenAPI and Swagger documentation
--   Basic async concepts
-
-### Initial endpoints
-
-``` text
-GET    /api/v1/health
-GET    /api/v1/sessions
-POST   /api/v1/sessions
-GET    /api/v1/gallery
+The admin panel will be accessible directly on the college domain at:
+```text
+https://scmips.in/admin/
 ```
 
-Add update, delete and image endpoints only as their corresponding
-features are implemented.
+### Primary Goals
+1. **Dynamic Gallery Management:** Full administrative control to create, update, and organize academic sessions, events, and gallery images.
+2. **Preserve Existing Public Site:** Strictly maintain the public website's design, styling, layout, existing pages, navigation, and legacy gallery images without visual disruption.
+3. **Seamless Integration:** Replace hardcoded gallery sections with dynamic PHP/MySQL data retrieval while keeping all other 450+ files untouched.
+4. **Beginner-Friendly Architecture:** Build a modular, framework-free PHP 8 application using PDO and MySQL that is easy to understand, inspect, debug, and maintain.
+5. **Learn-by-Building:** Serve as a practical bridge for a developer transitioning from Python fundamentals to real-world PHP and MySQL backend development.
 
-### Exercises
+### Scope Boundary
+- **In Scope:** Administrative authentication, session management, event management, multi-image upload and deletion, database schema design, admin dashboard, and integration with the public gallery pages (`gallery.html`, `gallery*.html`, `showimages.php`).
+- **Out of Scope (for MVP):** Full CMS for other website pages (Admissions, Courses, Faculty, Notices), student portals, payment gateways, or rewriting the entire site into a modern framework.
 
--   Build a small in-memory API before connecting a database.
--   Test endpoints through Swagger UI or an API client.
--   Return appropriate status codes for success and errors.
--   Validate missing and malformed input.
+---
 
-### Deliverable
+## 2. Final Technology Stack
 
-A working FastAPI application with documented, validated endpoints.
+The previous architecture using Python (FastAPI, Uvicorn, PostgreSQL, SQLAlchemy, Alembic) has been completely retired in favor of native PHP and MySQL to match the existing hosting environment and eliminate external hosting dependencies.
 
-------------------------------------------------------------------------
+| Layer | Selected Technology | Purpose & Justification |
+| :--- | :--- | :--- |
+| **Backend Language** | **PHP 8.x** | Native runtime on existing cPanel hosting; eliminates need for external VPS or container orchestration. |
+| **Database** | **MySQL** | Standard relational database available on cPanel hosting. |
+| **DB Connectivity** | **PDO (PHP Data Objects)** | Secure database abstraction supporting prepared statements to eliminate SQL injection vulnerabilities. |
+| **Frontend Layout** | **HTML5, CSS3, JavaScript** | Clean, standards-compliant interface for forms and dashboards. |
+| **UI Framework** | **Bootstrap 5** | Responsive, mobile-ready admin UI components (tables, modals, alerts, cards) without complex build tools. |
+| **Image Processing** | **PHP GD Library** *(if hosting enabled)* | Server-side image dimension verification, thumbnail generation, and MIME validation. |
+| **Local Dev Server** | **PHP Built-in Server / XAMPP** | Lightweight zero-config development environment on Windows. |
+| **Version Control** | **Git & GitHub** | Source code tracking, milestone commits, and backup. |
+| **Production Hosting** | **Existing Windows Hosting with cPanel** | Shared hosting at `scmips.in` accessible via cPanel File Manager and FTP/SFTP. |
 
-## 7. Phase 3 --- PostgreSQL, SQLAlchemy and Alembic
+> [!IMPORTANT]
+> **No External Frameworks:** Do not introduce Laravel, Symfony, CodeIgniter, or complex composer dependencies. We are building a lightweight, vanilla PHP application where every line of code is transparent and educational.
 
-**Estimated duration:** 7--10 days
+---
 
-### Topics
+## 3. Existing Website Context & Constraints
 
--   Relational database concepts
--   Tables, rows, columns and data types
--   Primary keys and foreign keys
--   One-to-many relationships
--   Constraints and indexes
--   SELECT, INSERT, UPDATE and DELETE
--   JOIN operations
--   Transactions
--   SQLAlchemy 2.x models and queries
--   Database sessions and dependency management
--   Alembic migrations
--   Basic query performance and pagination
+The existing SCMIPS production environment imposes specific operational boundaries that must guide every architectural choice:
 
-### Initial data model
+1. **Shared Hosting Reality:** The website runs on a Windows-based cPanel hosting server. Separate hosting or containerized microservices are not possible.
+2. **Path Constraints:** The admin panel must reside in `/admin/` relative to the public root (`scmips.in/admin/`).
+3. **Incomplete Source Archive:** The provided source archive contains ~458 files (64 HTML, 11 PHP, 15 JS, 9 CSS, plus image assets). It represents the latest snapshot available, but **must never be assumed to be 100% complete or identical to production**.
+4. **No Existing Database:** There is currently no live MySQL database powering the website; existing pages are static or use flat-file PHP scripts (`showimages.php`). A new MySQL database must be created via cPanel.
+5. **Isolation Principle:** Only gallery-related files may be modified. All other website sections (admissions, academics, contacts, navigation headers, footers) must remain 100% intact.
+6. **Asset Preservation:** Existing gallery assets organized by academic year (e.g., `assets/images/gallery/201819/`, `201920/`, `202122/`) must never be deleted, moved, or overwritten.
+7. **Pre-Deployment Backup Mandatory:** A full cPanel/FTP backup must be downloaded and archived prior to modifying any file on production.
 
-#### Admin
+---
 
-Suggested fields:
+## 4. Existing Gallery Source Findings
 
--   `id`
--   `name`
--   `email` (unique)
--   `password_hash`
--   `role`
--   `is_active`
--   `created_at`
--   `updated_at`
+Inspection of the supplied source archive revealed the following gallery-related assets:
 
-#### AcademicSession
+- **Public HTML/PHP Files:**
+  - `gallery.html`: Main gallery landing page displaying sessions or highlights.
+  - `gallery201819.html`: Static gallery page for academic session 2018–2019.
+  - `gallery201920.html`: Static gallery page for academic session 2019–2020.
+  - `gallery202122.html`: Static gallery page for academic session 2021–2022.
+  - `gallary.html`: Legacy/alternate spelling page (needs verification during source inspection).
+  - `showimages.php`: Existing script for dynamic or query-string-based image display.
+- **Image Directory Structure:**
+  - `assets/images/gallery/201819/`
+  - `assets/images/gallery/201920/`
+  - `assets/images/gallery/202122/`
 
-Suggested fields:
+*Note: These paths are findings from the local archive. Before integration, verify exact file paths on the live server.*
 
--   `id`
--   `title`
--   `slug` (unique)
--   `is_published`
--   `sort_order`
--   `created_at`
--   `updated_at`
+---
 
-#### GalleryImage
+## 5. Suggested Project & Folder Structure
 
-Suggested fields:
+The application will reside in the `admin/` directory alongside the existing website files, keeping core configuration protected:
 
--   `id`
--   `session_id` (foreign key)
--   `title` (optional)
--   `image_url` or storage key
--   `thumbnail_url` or thumbnail storage key
--   `alt_text`
--   `sort_order`
--   `is_published`
--   `uploaded_by` (admin foreign key)
--   `created_at`
--   `updated_at`
-
-Finalize fields after discovery. Avoid storing image binary data
-directly in database rows.
-
-### Deliverables
-
--   PostgreSQL database
--   SQLAlchemy models and relationships
--   Alembic migration setup
--   Database connection and session handling
--   Tested CRUD operations
-
-### Acceptance criteria
-
-A session can have multiple images; database constraints prevent invalid
-relationships; migrations can create and update the schema reliably.
-
-------------------------------------------------------------------------
-
-## 8. Phase 4 --- Authentication and Application Security
-
-**Estimated duration:** 5--7 days
-
-### Topics
-
--   Authentication vs authorization
--   Password hashing and verification
--   Secure browser authentication
--   Cookie-based sessions vs token-based authentication
--   Role-based access control
--   CSRF protection for cookie-authenticated forms
--   CORS and trusted origins
--   Rate limiting
--   Environment variables and secret management
--   Secure file-upload validation
--   Security headers and HTTPS
-
-### Features
-
--   Admin login and logout
--   Protected dashboard and management routes
--   Admin roles if multiple staff members need different permissions
--   Password change
--   Login attempt restrictions
--   Secure image upload validation
--   Confirmation for destructive actions
-
-### Security requirements
-
--   Never store plaintext passwords.
--   Never commit `.env` files or secrets.
--   Validate uploaded file size, extension, MIME type and actual image
-    decoding.
--   Generate server-side unique filenames or object keys.
--   Prevent path traversal and executable uploads.
--   Restrict upload access and serve images safely.
--   Apply authorization checks on every protected operation, not just by
-    hiding UI controls.
--   Use HTTPS in production.
--   Configure trusted hosts/origins and secure cookies appropriately.
--   Back up the database and image storage.
-
-### Deliverable
-
-A protected admin area with tested authentication and authorization.
-
-------------------------------------------------------------------------
-
-## 9. Phase 5 --- Admin Frontend and Dashboard
-
-**Estimated duration:** 7--10 days
-
-### UI technology
-
--   HTML
--   CSS
--   Bootstrap 5
--   Vanilla JavaScript
--   Jinja2 only if server-rendered templates are selected
-
-### Pages
-
-1.  Login
-2.  Dashboard
-3.  Gallery management
-4.  Upload images
-5.  Academic session management
-6.  Admin profile
-7.  Settings
-
-### Dashboard features
-
--   Total gallery images
--   Total academic sessions
--   Recently uploaded images
--   Published and unpublished counts
--   Quick upload action
-
-### Gallery features
-
--   Image grid and previews
--   Search and filtering by academic session
--   Bulk image upload
--   Edit image title and alt text
--   Publish/unpublish
--   Delete with confirmation
--   Reorder images
--   Pagination or lazy loading when required
-
-### UX requirements
-
--   Professional design aligned with SCMIPS branding
--   Responsive on desktop, tablet and mobile
--   Clear loading, success and error states
--   Accessible labels and keyboard-friendly controls
--   No unnecessary visual effects or clutter
-
-### Deliverable
-
-A responsive custom admin dashboard connected to the backend.
-
-------------------------------------------------------------------------
-
-## 10. Phase 6 --- Gallery Management and Public Website Integration
-
-**Estimated duration:** 4--7 days
-
-### Admin workflow
-
-1.  Admin signs in.
-2.  Admin creates or selects an academic session.
-3.  Admin uploads one or more photographs.
-4.  Backend validates and processes the images.
-5.  Image metadata is stored in the database.
-6.  Admin previews and publishes the images.
-7.  Public gallery displays published content.
-
-### Public API examples
-
-``` text
-GET /api/v1/public/sessions
-GET /api/v1/public/sessions/{slug}/images
+```text
+scmips/                              (Web root / public_html)
+│
+├── admin/                           (Admin Panel Module)
+│   ├── index.php                    (Redirects to dashboard or login)
+│   ├── login.php                    (Admin authentication form & handler)
+│   ├── logout.php                   (Session destruction & logout)
+│   ├── dashboard.php                (Summary metrics & quick actions)
+│   │
+│   ├── config/
+│   │   ├── config.php               (DB credentials & constants - gitignored)
+│   │   └── config.sample.php        (Sample configuration template for Git)
+│   │
+│   ├── includes/
+│   │   ├── db.php                   (PDO database connection instance)
+│   │   ├── auth.php                 (Session validation & access gatekeeper)
+│   │   ├── csrf.php                 (CSRF token generation & verification)
+│   │   ├── functions.php            (Sanitization, helpers, file validators)
+│   │   ├── header.php               (Reusable Bootstrap admin navigation)
+│   │   └── footer.php               (Reusable admin footer & script tags)
+│   │
+│   ├── sessions/
+│   │   ├── index.php                (List all academic sessions)
+│   │   ├── create.php               (Add new session form & processor)
+│   │   ├── edit.php                 (Update session details)
+│   │   └── delete.php               (Safe deletion with dependency check)
+│   │
+│   ├── events/
+│   │   ├── index.php                (List events with session filter)
+│   │   ├── create.php               (Add new event with session picker)
+│   │   ├── edit.php                 (Edit event title, date, status)
+│   │   └── delete.php               (Delete event & cascade images)
+│   │
+│   ├── images/
+│   │   ├── upload.php               (Multi-image upload form & handler)
+│   │   └── delete.php               (Delete single image & unlink file)
+│   │
+│   ├── assets/
+│   │   ├── css/
+│   │   │   └── admin.css            (Custom admin styling)
+│   │   └── js/
+│   │       └── admin.js             (Form validation, preview & confirmation)
+│   │
+│   └── uploads/
+│       ├── .htaccess                (Apache: Disable script execution)
+│       ├── web.config               (IIS/Windows: Disable script execution)
+│       └── gallery/                 (Target directory for admin uploads)
+│
+├── assets/                          (Existing website static assets)
+│   └── images/
+│       └── gallery/                 (Existing legacy gallery images preserved)
+│
+├── gallery.php                      (Dynamic public gallery landing page)
+├── gallery-view.php                 (Public event/session image viewer)
+└── ...                              (All remaining existing website files)
 ```
 
-Public endpoints should return only published sessions and published
-images.
+---
 
-### Integration tasks
+## 6. Database Design (MySQL + PDO)
 
--   Preserve existing gallery content during migration.
--   Modify the existing public gallery only where necessary.
--   Fetch session and image data from the API.
--   Keep the public website's existing visual design.
--   Handle API failures gracefully.
--   Add pagination or lazy loading if gallery volume requires it.
--   Test desktop and mobile layouts.
--   Verify that unpublished or deleted content is not displayed
-    publicly.
+We will create a normalized relational schema with explicit foreign keys, indexes, and referential integrity constraints.
 
-### Deliverable
+```mermaid
+erDiagram
+    ADMINS ||--o{ GALLERY_EVENTS : "creates"
+    GALLERY_SESSIONS ||--o{ GALLERY_EVENTS : "has"
+    GALLERY_EVENTS ||--o{ GALLERY_IMAGES : "contains"
 
-A staff member can publish an image through the admin panel and see it
-appear on the existing public gallery without editing HTML manually.
+    ADMINS {
+        int id PK
+        varchar username UK
+        varchar password_hash
+        varchar full_name
+        varchar email
+        datetime created_at
+        datetime updated_at
+    }
 
-------------------------------------------------------------------------
+    GALLERY_SESSIONS {
+        int id PK
+        varchar session_name
+        varchar academic_year UK
+        tinyint is_active
+        int sort_order
+        datetime created_at
+        datetime updated_at
+    }
 
-## 11. Phase 7 --- Testing and Advanced Backend Engineering
+    GALLERY_EVENTS {
+        int id PK
+        int session_id FK
+        varchar title
+        varchar slug
+        text description
+        date event_date
+        varchar cover_image
+        tinyint is_published
+        datetime created_at
+        datetime updated_at
+    }
 
-**Estimated duration:** 5--7 days initially; continue throughout
-development
-
-### Testing
-
-Use Pytest for:
-
--   Unit tests for business logic
--   API endpoint tests
--   Authentication and authorization tests
--   Database integration tests
--   Upload validation tests
--   Public-gallery visibility tests
--   Error and edge-case tests
-
-### Additional engineering topics
-
-  -----------------------------------------------------------------------
-  Technology              Purpose                 When to introduce
-  ----------------------- ----------------------- -----------------------
-  Redis                   Caching and shared      When a real caching
-                          temporary data          need exists
-
-  Background processing   Slow image processing   When synchronous
-                          or other long-running   processing becomes
-                          work                    unsuitable
-
-  Celery or another task  Distributed background  Only if job
-  queue                   jobs                    requirements justify it
-
-  Ruff                    Linting and formatting  Early in development
-
-  Structured logging      Production debugging    During implementation
-
-  Monitoring              Error and availability  Before production
-                          visibility              
-  -----------------------------------------------------------------------
-
-Do not introduce Redis, Celery or RabbitMQ simply to make the project
-look more advanced.
-
-### Deliverable
-
-Automated tests, consistent code quality checks and useful application
-logs.
-
-------------------------------------------------------------------------
-
-## 12. Phase 8 --- Docker, Deployment and Production
-
-**Estimated duration:** 4--7 days
-
-### Topics
-
--   Linux command-line basics
--   Docker images and containers
--   Docker Compose for local development
--   Environment-specific configuration
--   Uvicorn and production ASGI serving
--   Nginx reverse proxy
--   DNS and subdomain configuration
--   HTTPS certificates
--   Database backups and restoration
--   Deployment logs and monitoring
--   GitHub Actions CI/CD
-
-### Possible production architecture
-
-``` text
-Public website
-    |
-    +-- scmips.in
-    |      Existing website hosting
-    |
-    +-- admin.scmips.in
-           |
-           Nginx / HTTPS
-           |
-           FastAPI application
-           |
-           +-- PostgreSQL
-           |
-           +-- Cloudflare R2 / Amazon S3
+    GALLERY_IMAGES {
+        int id PK
+        int event_id FK
+        varchar file_name
+        varchar file_path
+        varchar original_name
+        int file_size
+        varchar mime_type
+        int sort_order
+        tinyint is_published
+        datetime created_at
+    }
 ```
 
-This is a proposed architecture, not a confirmed hosting arrangement.
-Final deployment depends on the existing provider, DNS access, available
-infrastructure and the college's requirements.
+### SQL Table Schema (DDL)
 
-### Deployment checklist
+```sql
+-- 1. Admins Table
+CREATE TABLE IF NOT EXISTS `admins` (
+    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `username` VARCHAR(50) NOT NULL UNIQUE,
+    `password_hash` VARCHAR(255) NOT NULL,
+    `full_name` VARCHAR(100) NOT NULL,
+    `email` VARCHAR(100) NULL,
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--   Confirm hosting supports the selected Python deployment model.
--   Configure production environment variables.
--   Use a production database, not a local development database.
--   Configure durable image storage.
--   Configure HTTPS and domain routing.
--   Apply database migrations safely.
--   Create and test backups.
--   Configure logs and monitoring.
--   Run smoke tests after deployment.
--   Verify public gallery integration.
--   Document recovery and rollback steps.
+-- 2. Gallery Sessions Table
+CREATE TABLE IF NOT EXISTS `gallery_sessions` (
+    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `session_name` VARCHAR(100) NOT NULL,            -- e.g. "Session 2021-2022"
+    `academic_year` VARCHAR(20) NOT NULL UNIQUE,      -- e.g. "2021-2022"
+    `is_active` TINYINT(1) NOT NULL DEFAULT 1,
+    `sort_order` INT NOT NULL DEFAULT 0,
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX `idx_sessions_year` (`academic_year`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-### Deliverable
+-- 3. Gallery Events Table
+CREATE TABLE IF NOT EXISTS `gallery_events` (
+    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `session_id` INT UNSIGNED NOT NULL,
+    `title` VARCHAR(200) NOT NULL,                    -- e.g. "Annual Sports Day 2022"
+    `slug` VARCHAR(220) NOT NULL,
+    `description` TEXT NULL,
+    `event_date` DATE NULL,
+    `cover_image` VARCHAR(255) NULL,
+    `is_published` TINYINT(1) NOT NULL DEFAULT 1,
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX `idx_events_session` (`session_id`),
+    INDEX `idx_events_published` (`is_published`),
+    CONSTRAINT `fk_events_session`
+        FOREIGN KEY (`session_id`) REFERENCES `gallery_sessions` (`id`)
+        ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-A deployed admin panel integrated with the SCMIPS website.
+-- 4. Gallery Images Table
+CREATE TABLE IF NOT EXISTS `gallery_images` (
+    `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    `event_id` INT UNSIGNED NOT NULL,
+    `file_name` VARCHAR(255) NOT NULL,                -- e.g. "img_65fa89b21a8d9_1710928306.jpg"
+    `file_path` VARCHAR(255) NOT NULL,                -- e.g. "admin/uploads/gallery/2022/..."
+    `original_name` VARCHAR(255) NOT NULL,            -- e.g. "DSC_0045.JPG"
+    `file_size` INT UNSIGNED NOT NULL DEFAULT 0,      -- In bytes
+    `mime_type` VARCHAR(50) NOT NULL,                 -- e.g. "image/jpeg"
+    `sort_order` INT NOT NULL DEFAULT 0,
+    `is_published` TINYINT(1) NOT NULL DEFAULT 1,
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX `idx_images_event` (`event_id`),
+    INDEX `idx_images_published` (`is_published`),
+    CONSTRAINT `fk_images_event`
+        FOREIGN KEY (`event_id`) REFERENCES `gallery_events` (`id`)
+        ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+```
 
-------------------------------------------------------------------------
+---
 
-## 13. Approximate Timeline
+## 7. Security Architecture & Implementation Rules
 
-  Phase                           Estimated duration
-  ----------------------------- --------------------
-  Discovery and requirements               1--2 days
-  Python fundamentals                      5--7 days
-  HTTP and FastAPI                         5--7 days
-  PostgreSQL and SQLAlchemy               7--10 days
-  Authentication and security              5--7 days
-  Frontend and dashboard                  7--10 days
-  Gallery integration                      4--7 days
-  Testing and advanced topics              5--7 days
-  Deployment                               4--7 days
+Every script in the admin panel and public endpoints must adhere strictly to these defensive standards:
 
-**Total estimate:** Approximately 43--57 working days, depending on
-existing knowledge, daily availability, hosting access and feedback from
-the college. Learning and implementation may overlap.
+### 1. Database Query Safety (Zero SQL Injection)
+- **Rule:** Never concatenate variables into SQL strings.
+- **Implementation:** Always use PDO prepared statements with parameter binding:
+  ```php
+  $stmt = $pdo->prepare("SELECT id, title FROM gallery_events WHERE session_id = :session_id AND is_published = 1");
+  $stmt->execute([':session_id' => $sessionId]);
+  $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  ```
 
-------------------------------------------------------------------------
+### 2. Password Security
+- **Hashing:** Use `password_hash($plainPassword, PASSWORD_DEFAULT)` (BCrypt / Argon2id).
+- **Verification:** Always verify using `password_verify($inputPassword, $storedHash)`. Never use MD5 or SHA1.
 
-## 14. Definition of Done
+### 3. Session Security
+- Configure secure session cookie parameters in a global include:
+  ```php
+  ini_set('session.cookie_httponly', 1);
+  ini_set('session.use_only_cookies', 1);
+  if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+      ini_set('session.cookie_secure', 1);
+  }
+  session_start();
+  ```
+- Call `session_regenerate_id(true)` immediately after successful credentials verification to prevent session fixation.
+- Terminate sessions cleanly on logout via `$_SESSION = []` and `session_destroy()`.
 
-The project is ready for college use when:
+### 4. CSRF (Cross-Site Request Forgery) Protection
+- Generate a cryptographically secure token per session:
+  ```php
+  if (empty($_SESSION['csrf_token'])) {
+      $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+  }
+  ```
+- Include `<input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">` on all forms.
+- Validate on every `POST` request using `hash_equals($_SESSION['csrf_token'], $_POST['csrf_token'] ?? '')`. Reject invalid requests with HTTP 403.
 
--   Authorized staff can securely log in and log out.
--   Admin permissions are enforced on the backend.
--   Staff can create, edit and publish academic sessions.
--   Staff can upload, preview, reorder and delete gallery images.
--   Upload validation and storage are reliable.
--   Public users can see only published content.
--   The existing website design and content are preserved.
--   The application works on mobile and desktop.
--   Database migrations and backups are documented and tested.
--   Automated tests cover important flows.
--   Production uses HTTPS and secure configuration.
--   Deployment and recovery instructions are documented.
+### 5. Secure File Upload Pipeline
+1. **Never Trust Client Extensions:** Do not validate uploads using `$_FILES['image']['name']` alone.
+2. **Validate Real MIME Type:** Inspect actual file magic bytes with `finfo`:
+   ```php
+   $finfo = new finfo(FILEINFO_MIME_TYPE);
+   $mime = $finfo->file($_FILES['image']['tmp_name']);
+   $allowedMimes = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
+   if (!array_key_exists($mime, $allowedMimes)) {
+       throw new Exception("Invalid file type. Only JPG, PNG, and WebP are allowed.");
+   }
+   ```
+3. **Randomize Server Filenames:** Construct unpredictable names:
+   ```php
+   $extension = $allowedMimes[$mime];
+   $uniqueName = 'img_' . bin2hex(random_bytes(10)) . '_' . time() . '.' . $extension;
+   ```
+4. **Execution Prevention:** Place a `.htaccess` and `web.config` inside `admin/uploads/` denying script execution (`.php`, `.phtml`, `.exe`).
+5. **Path Traversal Protection:** Sanitize all file operations using `basename()` before `unlink()`.
 
-------------------------------------------------------------------------
+### 6. XSS Prevention
+- All user-supplied output in HTML must pass through `htmlspecialchars($string, ENT_QUOTES, 'UTF-8')`.
 
-## 15. Learning Checkpoints
+### 7. Production Error Handling
+- Local development: `display_errors = 1`, `error_reporting(E_ALL)`.
+- Production: `display_errors = 0`, log errors to server log, and show a clean friendly error page to users.
 
-At the end of each major phase, be able to answer these questions
-without relying on Cursor:
+---
 
--   **Python:** Can I explain functions, classes, exceptions, modules
-    and type hints?
--   **FastAPI:** Can I create an endpoint, validate input and return the
-    correct status code?
--   **Database:** Can I explain primary keys, foreign keys,
-    relationships, joins and migrations?
--   **Security:** Can I explain password hashing, authentication,
-    authorization and secure uploads?
--   **Testing:** Can I write and run a test for an API endpoint?
--   **Deployment:** Can I explain how a domain request reaches the
-    FastAPI application and database?
+## 8. Learn-by-Building Methodology: Python to PHP
 
-The project is not complete from a learning perspective until you can
-explain the important decisions and debug common issues yourself.
+As a Python beginner learning PHP and MySQL through this build, keep these foundational mental models in mind:
 
-------------------------------------------------------------------------
+```mermaid
+flowchart TD
+    subgraph MentalModel ["Python vs PHP Concepts"]
+        direction LR
+        Py1["Python: Virtualenv / pip"] <--> Php1["PHP: Built-in runtime / XAMPP"]
+        Py2["Python: dict {'key': 'val'}"] <--> Php2["PHP: Assoc Array ['key' => 'val']"]
+        Py3["Python: SQLAlchemy / db.session"] <--> Php3["PHP: PDO with prepared statements"]
+        Py4["Python: FastAPI Request / Pydantic"] <--> Php4["PHP: Superglobals $_POST, $_GET, $_FILES"]
+        Py5["Python: Jinja2 Templates"] <--> Php5["PHP: Native templating <?= htmlspecialchars(...) ?>"]
+    end
+```
 
-## 16. First Steps
+### The 6-Step Implementation Cycle for Every Phase
+1. **Understand:** Read the concept summary and what problem this phase solves.
+2. **Inspect:** Check existing files before writing code.
+3. **Execute Cursor Prompt:** Run the provided prompt in Cursor to generate targeted, modular files.
+4. **Code Walkthrough:** Inspect every generated function to ensure there are no black boxes.
+5. **Manual Test:** Follow the step-by-step verification instructions.
+6. **Notebook Checkpoint:** Record the key takeaway note in your developer journal.
 
-Do not start by asking Cursor to generate the entire application.
+---
 
-Begin in this order:
+## 9. Step-by-Step Implementation Phases
 
-1.  Inspect the existing SCMIPS website, gallery and available source
-    code.
-2.  Confirm the hosting provider and access to DNS/domain configuration.
-3.  Finalize the public-gallery integration approach.
-4.  Write the requirements and acceptance criteria.
-5.  Set up Python, Git and a virtual environment.
-6.  Learn the Python concepts needed for the first implementation.
-7.  Build a minimal FastAPI health-check endpoint.
-8.  Continue phase by phase using the learn-by-building workflow.
+```mermaid
+flowchart LR
+    P1[Phase 1: Setup] --> P2[Phase 2: Source Inspection]
+    P2 --> P3[Phase 3: Local Dev]
+    P3 --> P4[Phase 4: DB & PDO]
+    P4 --> P5[Phase 5: Auth & Layout]
+    P5 --> P6[Phase 6: Dashboard]
+    P6 --> P7[Phase 7: Sessions]
+    P7 --> P8[Phase 8: Events]
+    P8 --> P9[Phase 9: Images Upload]
+    P9 --> P10[Phase 10: Public Gallery]
+    P10 --> P11[Phase 11: Security & QA]
+    P11 --> P12[Phase 12: Deployment]
+```
 
-**Guiding principle:** Cursor helps with implementation; you remain
-responsible for understanding, reviewing, testing and maintaining the
-application.
+---
+
+### Phase 1: Environment & Project Setup
+
+#### What We Are Building
+A clean, version-controlled project workspace that separates administrative code from legacy website assets. We will set up Git, configure `.gitignore` to prevent sensitive credentials and uploaded media from leaking, and structure the working directory.
+
+#### Concepts to Learn
+- Git tracking, branch management, and `.gitignore` rules.
+- Environment separation: why secrets (`config.php`) and binary media uploads must never be committed to Git.
+- Sample configuration pattern: using `config.sample.php` as a template.
+
+#### Cursor Prompt
+```text
+I am setting up a Git repository for the SCMIPS Gallery Admin Panel project.
+Generate a comprehensive .gitignore file for a Windows/PHP project.
+It should exclude:
+1. admin/config/config.php (database credentials)
+2. admin/uploads/gallery/* (uploaded media, keep directory with .gitkeep)
+3. Windows system files (Thumbs.db, desktop.ini)
+4. IDE files (.vscode, .idea)
+5. Temporary PHP session and error log files (*.log)
+Also create a sample configuration template at admin/config/config.sample.php with placeholders for DB_HOST, DB_NAME, DB_USER, DB_PASS, and APP_URL.
+```
+
+#### Code Walkthrough & Understanding
+- Check `.gitignore`: Verify that `config.php` will never accidentally be committed.
+- Check `config.sample.php`: Ensure clear constant definitions (`define('DB_HOST', 'localhost');`).
+
+#### Manual Testing Instructions
+1. Run `git status` in terminal.
+2. Confirm `admin/config/config.sample.php` is staged, but a test file `admin/config/config.php` remains untracked.
+
+#### Notebook Note
+> **Developer Notebook #1:**
+> *Never commit real database credentials or user-uploaded media to GitHub. Always commit a `.sample` file with dummy values so anyone deploying the project knows what configuration variables are required.*
+
+---
+
+### Phase 2: Inspect & Recover Existing Website Source
+
+#### What We Are Building
+An inventory script and verification audit of the supplied archive (`~458` files) to map exact gallery references, links, and asset dependencies without breaking existing pages.
+
+#### Concepts to Learn
+- Static vs dynamic links in legacy HTML websites.
+- Relative vs absolute URL paths (`assets/...` vs `/assets/...`).
+- How `gallery.html`, `gallery201819.html`, and `showimages.php` currently locate photographs.
+
+#### Cursor Prompt
+```text
+Inspect the SCMIPS source archive directory.
+Scan and list:
+1. All files named *gallery* or containing gallery markup.
+2. How showimages.php works and what parameters it accepts.
+3. The exact directory path where legacy gallery images reside (e.g., assets/images/gallery/...).
+4. Document the findings in a markdown table so we know which files to preserve and which to adapt.
+Do not modify or delete any file during this inspection.
+```
+
+#### Code Walkthrough & Understanding
+- Verify if images are directly hardcoded inside `<img>` tags or if any JavaScript lightbox/slider is being utilized.
+- Identify the CSS classes and DOM structure used by the public gallery so our dynamic version can match it 1:1.
+
+#### Manual Testing Instructions
+1. Open `gallery.html` and `gallery202122.html` in a web browser.
+2. Check browser Developer Tools (F12) Console for missing images or broken links.
+
+#### Notebook Note
+> **Developer Notebook #2:**
+> *When working with legacy sites, inspect before touching. Never assume standard folder structures; observe the actual file names and asset paths used by the original author.*
+
+---
+
+### Phase 3: Local PHP and MySQL Setup
+
+#### What We Are Building
+A local development environment using PHP 8.x and MySQL (via XAMPP or the PHP built-in web server) allowing rapid testing before touching production.
+
+#### Concepts to Learn
+- How the PHP built-in web server works (`php -S localhost:8000`).
+- Document root and routing differences on local machines vs production Windows cPanel.
+- Managing local MySQL via phpMyAdmin or the MySQL command line.
+
+#### Cursor Prompt
+```text
+Provide a PowerShell script or clear instructions to run the SCMIPS project locally.
+1. Command to launch the PHP 8 built-in development server pointing to the project root.
+2. How to create the local database `scmips_db` using MySQL CLI or phpMyAdmin.
+3. Create a simple health check file at admin/health.php that checks:
+   - PHP version (requires 8.0+)
+   - PDO MySQL extension loaded
+   - GD extension loaded
+   - Uploads folder write permission
+Return the output as clean JSON or HTML.
+```
+
+#### Code Walkthrough & Understanding
+- Understand `extension_loaded('pdo_mysql')` and `is_writable()`.
+- Learn how `admin/health.php` lets you quickly verify any environment (local or production).
+
+#### Manual Testing Instructions
+1. Open PowerShell and run: `php -S localhost:8000`.
+2. Visit `http://localhost:8000/admin/health.php` in your browser.
+3. Confirm that PHP version, PDO, and write permissions show "OK".
+
+#### Notebook Note
+> **Developer Notebook #3:**
+> *The PHP CLI server (`php -S`) is fantastic for rapid local development. A health check script (`health.php`) is your best friend when moving between local XAMPP and production hosting.*
+
+---
+
+### Phase 4: Database Schema and PDO Connection
+
+#### What We Are Building
+The database initialization script (`schema.sql`) and a centralized, singleton-style PDO connection provider (`admin/includes/db.php`) that handles connection failures gracefully.
+
+#### Concepts to Learn
+- PDO (PHP Data Objects) and why it is superior to legacy `mysqli_*`.
+- PDO attributes: `ATTR_ERRMODE => ERRMODE_EXCEPTION`, `ATTR_DEFAULT_FETCH_MODE => FETCH_ASSOC`.
+- Relational integrity: Why foreign keys protect against orphaned records.
+
+#### Cursor Prompt
+```text
+Write the database initialization script and PDO connection module for SCMIPS Admin.
+1. File: admin/config/config.php (reading DB_HOST, DB_NAME, DB_USER, DB_PASS, DB_CHARSET).
+2. File: admin/includes/db.php:
+   - Establish a PDO connection using utf8mb4 charset.
+   - Configure PDO to throw exceptions on errors.
+   - Ensure default fetch mode is PDO::FETCH_ASSOC.
+   - Disable emulated prepared statements.
+   - Catch PDOException and display a safe error message without leaking credentials.
+3. File: admin/setup_db.sql:
+   - DDL for tables: admins, gallery_sessions, gallery_events, gallery_images.
+   - Seed one initial default admin record with a hashed password using password_hash('Admin@123', PASSWORD_DEFAULT).
+```
+
+#### Code Walkthrough & Understanding
+- Examine `$pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);` — this ensures real prepared statements are executed by MySQL, offering rock-solid SQL injection immunity.
+
+#### Manual Testing Instructions
+1. Import `setup_db.sql` into local MySQL database `scmips_db`.
+2. Create a test script `test_db.php` that includes `admin/includes/db.php` and executes `SELECT 1`.
+3. Verify that the table structure in phpMyAdmin shows the correct foreign keys.
+
+#### Notebook Note
+> **Developer Notebook #4:**
+> *PDO prepared statements separate SQL code from user data. Data sent to `:param` placeholders can never alter the structure of the SQL query, which prevents SQL injection attacks completely.*
+
+---
+
+### Phase 5: Authentication & Admin Layout
+
+#### What We Are Building
+A secure admin login and session gatekeeper:
+- `admin/login.php`: Bootstrap 5 login page with username and password validation.
+- `admin/logout.php`: Session invalidation.
+- `admin/includes/auth.php`: Middleware include that checks `$_SESSION['admin_logged_in']` on every protected page.
+- `admin/includes/header.php` & `footer.php`: Reusable admin navigation bar and shell.
+
+#### Concepts to Learn
+- Session management: `session_start()`, `$_SESSION`, and `session_regenerate_id()`.
+- Password verification: `password_verify($password, $admin['password_hash'])`.
+- Header redirects in PHP: `header("Location: login.php"); exit;`.
+
+#### Cursor Prompt
+```text
+Create the authentication system for SCMIPS Admin:
+1. admin/includes/auth.php:
+   - Check if an admin is logged in. If not, redirect to admin/login.php with an error message and exit.
+2. admin/login.php:
+   - Clean Bootstrap 5 login card with SCMIPS logo/branding.
+   - Handle POST request: fetch admin by username using PDO prepared statement.
+   - Verify password using password_verify().
+   - On success: regenerate session ID, set $_SESSION['admin_id'] and $_SESSION['admin_username'], redirect to dashboard.php.
+   - On failure: display 'Invalid credentials' error.
+   - Include CSRF token validation.
+3. admin/logout.php:
+   - Clear $_SESSION, destroy cookie, call session_destroy(), redirect to login.php.
+4. admin/includes/header.php and footer.php:
+   - Responsive Bootstrap 5 navbar with links to Dashboard, Sessions, Events, and Logout.
+```
+
+#### Code Walkthrough & Understanding
+- Check why `exit;` is mandatory right after `header("Location: ...")` (otherwise PHP continues executing subsequent code).
+- Understand why `password_verify` is timing-attack safe.
+
+#### Manual Testing Instructions
+1. Visit `http://localhost:8000/admin/dashboard.php` directly in a private browser window. Verify that you are redirected to `login.php`.
+2. Try logging in with invalid credentials; verify that an error alert displays.
+3. Log in with `admin` / `Admin@123`; verify successful entry into `dashboard.php`.
+4. Click Logout; confirm that returning via the back button redirects back to `login.php`.
+
+#### Notebook Note
+> **Developer Notebook #5:**
+> *Never trust client-side state. Every single admin page must start by including `auth.php` at the very top. If the session variable is missing or invalid, redirect immediately and always call `exit;`.*
+
+---
+
+### Phase 6: Admin Dashboard
+
+#### What We Are Building
+An overview dashboard (`admin/dashboard.php`) providing quick operational insights and direct navigation cards:
+- Total Academic Sessions count.
+- Total Gallery Events count (and breakdown of published vs unpublished).
+- Total Gallery Photographs count.
+- Quick action buttons: "Create New Session", "Add Event", "Upload Images".
+- Recent 5 uploaded events or images.
+
+#### Concepts to Learn
+- SQL aggregation functions: `COUNT()`, `COUNT(CASE WHEN ... THEN 1 END)`.
+- Reusable page templating: combining `header.php`, page content, and `footer.php`.
+
+#### Cursor Prompt
+```text
+Build admin/dashboard.php for SCMIPS Admin:
+1. Include admin/includes/auth.php and admin/includes/db.php.
+2. Execute PDO queries to calculate:
+   - Total sessions count.
+   - Total events count (and count of published vs draft).
+   - Total photos uploaded count.
+   - List of the 5 most recently created events with their session name and publication status.
+3. Display the metrics in responsive Bootstrap 5 stat cards with clean icons.
+4. Provide quick-action buttons to Create Session, Create Event, and Upload Images.
+5. Render clean UI with header.php and footer.php.
+```
+
+#### Code Walkthrough & Understanding
+- Understand the SQL `JOIN` between `gallery_events` and `gallery_sessions` to display the session name alongside each event.
+
+#### Manual Testing Instructions
+1. Log in and load `admin/dashboard.php`.
+2. Verify all counters display 0 (or seeded values).
+3. Confirm quick action buttons link to their respective create pages.
+
+#### Notebook Note
+> **Developer Notebook #6:**
+> *A dashboard should give the administrator an immediate sense of system health and shortcuts to everyday tasks without cluttering the screen with unnecessary metrics.*
+
+---
+
+### Phase 7: Academic Session Management (CRUD)
+
+#### What We Are Building
+Full administrative management for academic sessions (e.g., "Session 2021-2022", "Session 2022-2023"):
+- `admin/sessions/index.php`: List all sessions with event counts and sort order.
+- `admin/sessions/create.php`: Form to create a session (academic year, title, status).
+- `admin/sessions/edit.php`: Form to modify an existing session.
+- `admin/sessions/delete.php`: Safe deletion with referential integrity guard (prevents deletion if events are attached).
+
+#### Concepts to Learn
+- CRUD operations (Create, Read, Update, Delete) in PHP.
+- Form data sanitization and validation (`trim()`, `filter_input()`).
+- Relational protection: checking foreign key dependencies before executing a delete query.
+- Flash messages via `$_SESSION['flash_success']` and `$_SESSION['flash_error']`.
+
+#### Cursor Prompt
+```text
+Implement Academic Session CRUD in admin/sessions/:
+1. index.php:
+   - Query all sessions ordered by sort_order ASC, academic_year DESC.
+   - Show table: Session Name, Academic Year, Active Status, Total Events, Actions (Edit, Delete).
+2. create.php:
+   - Form fields: session_name (e.g. "Session 2023-2024"), academic_year (e.g. "2023-2024"), is_active checkbox, sort_order.
+   - Server-side validation: academic_year format (YYYY-YYYY), unique check in DB.
+   - Handle POST with CSRF validation.
+3. edit.php:
+   - Pre-populate form with existing session data by ID.
+   - Update database on submit with prepared statement.
+4. delete.php:
+   - Check if any events exist under this session_id.
+   - If events exist, prevent deletion and redirect with error: 'Cannot delete session containing events. Remove or reassign events first.'
+   - If no events exist, delete session safely.
+Include CSRF validation on all state-changing actions.
+```
+
+#### Code Walkthrough & Understanding
+- Trace the validation logic: Why `academic_year` uniqueness matters to prevent duplicate session records.
+- Understand the safe deletion check: `SELECT COUNT(*) FROM gallery_events WHERE session_id = ?`.
+
+#### Manual Testing Instructions
+1. Create a session "2023-2024" (Session 2023-2024).
+2. Attempt to create the same academic year again; verify that validation stops the duplicate.
+3. Edit the session name; verify the update persists in the database.
+4. Test deleting an empty session; confirm successful removal.
+
+#### Notebook Note
+> **Developer Notebook #7:**
+> *Never allow destructive database deletions without validating dependencies. If a parent record (Session) has children (Events), inform the administrator rather than breaking database integrity or leaving orphaned rows.*
+
+---
+
+### Phase 8: Event Management (CRUD)
+
+#### What We Are Building
+Management interface for gallery events within academic sessions:
+- `admin/events/index.php`: List events with filtering by session, publication status, and image count.
+- `admin/events/create.php`: Create event with session assignment, title, event date, description, and status.
+- `admin/events/edit.php`: Update event details and toggle publish/unpublish.
+- `admin/events/delete.php`: Delete event with confirmation (and cascade clean-up of associated images).
+
+#### Concepts to Learn
+- Foreign key dropdowns: populating `<select>` options dynamically from `gallery_sessions`.
+- Generating clean URL slugs from titles (`slugify()`).
+- Filtering SQL queries using optional GET parameters (`?session_id=1`).
+
+#### Cursor Prompt
+```text
+Implement Gallery Event CRUD in admin/events/:
+1. index.php:
+   - Display a session filter dropdown at the top.
+   - Table columns: Cover Image, Event Title, Academic Session, Event Date, Photo Count, Status (Published/Draft Badge), Actions.
+2. create.php:
+   - Dropdown of active sessions from gallery_sessions.
+   - Fields: Title, Event Date (HTML5 date input), Description (textarea), Published Status (toggle/checkbox).
+   - Generate slug from title.
+   - Insert record using PDO prepared statement.
+   - Redirect to images/upload.php?event_id={new_id} so the user can immediately add photos.
+3. edit.php:
+   - Edit event details and toggle publication status.
+4. delete.php:
+   - Retrieve all images under this event.
+   - Unlink image files from disk.
+   - Delete event record (cascading to gallery_images table).
+   - Use a database transaction ($pdo->beginTransaction(), commit(), rollBack()).
+```
+
+#### Code Walkthrough & Understanding
+- Inspect PDO database transactions (`beginTransaction` and `commit`): why grouping database deletions with filesystem file deletions guarantees data consistency.
+
+#### Manual Testing Instructions
+1. Create a new event "Annual Day 2023" under session "2023-2024".
+2. Filter the events list by session; verify the list updates.
+3. Toggle the event status between Published and Draft; verify status changes.
+
+#### Notebook Note
+> **Developer Notebook #8:**
+> *Database transactions ensure all-or-nothing operations. If you are deleting an event and cleaning up related records, wrap the steps in a transaction so a database failure won't leave your filesystem and database out of sync.*
+
+---
+
+### Phase 9: Multiple Image Uploads & Image Management
+
+#### What We Are Building
+A robust, secure multi-image upload pipeline and gallery viewer for events:
+- `admin/images/upload.php`: Multi-file picker with JavaScript preview, server-side MIME verification, and unique filename generation.
+- `admin/images/delete.php`: Delete individual photo with file unlinking from disk and database record deletion.
+- Image sorting and cover photo assignment.
+
+#### Concepts to Learn
+- Handling multi-file uploads via `$_FILES['images']['name'][]`.
+- Server-side MIME verification using PHP `finfo` (magic bytes inspection).
+- Preventing directory traversal and shell execution in upload directories.
+- PHP file system operations: `move_uploaded_file()` and `unlink()`.
+
+#### Cursor Prompt
+```text
+Implement secure image upload and management in admin/images/:
+1. upload.php:
+   - Accept event_id via query parameter; display event details at top.
+   - Multi-file HTML input: <input type="file" name="images[]" multiple accept="image/jpeg,image/png,image/webp">.
+   - Client-side preview grid before upload using vanilla JavaScript.
+   - Server-side processing:
+     * Check max upload size (e.g. 5MB per file).
+     * Verify MIME type using finfo_file(FILEINFO_MIME_TYPE) allowing only image/jpeg, image/png, image/webp.
+     * Generate unique filename: 'img_' . bin2hex(random_bytes(8)) . '_' . time() . '.' . $ext.
+     * Ensure target directory exists: admin/uploads/gallery/{session_year}/{event_id}/.
+     * Move uploaded file with move_uploaded_file().
+     * Insert record in gallery_images (event_id, file_name, file_path, original_name, file_size, mime_type).
+   - Below upload form, show current gallery grid for this event with thumbnail, filename, and Delete button.
+2. delete.php:
+   - Accept image_id via POST with CSRF token.
+   - Fetch image record from DB.
+   - Sanitize path with realpath() and ensure it is inside admin/uploads/gallery/.
+   - Unlink file from disk.
+   - Delete record from gallery_images.
+3. Create admin/uploads/.htaccess and admin/uploads/web.config to deny PHP script execution in the uploads folder.
+```
+
+#### Code Walkthrough & Understanding
+- Check how `$_FILES['images']` is structured when `multiple` is used in HTML (arrays of names, types, tmp_names, errors, and sizes).
+- Inspect the `.htaccess` and `web.config` file rules denying script execution inside `uploads/`.
+
+#### Manual Testing Instructions
+1. Upload 3 JPG/PNG images to an event. Verify they appear in the thumbnail grid.
+2. Try uploading a `.txt` or `.php` file (or a file renamed to `.jpg` containing text). Verify that `finfo` rejects the upload with an error.
+3. Delete an image; verify the database row is deleted and the file disappears from the upload directory on disk.
+
+#### Notebook Note
+> **Developer Notebook #9:**
+> *Never trust the file extension provided by the browser. A malicious user can name a PHP script `shell.php.jpg`. Always inspect the file's binary signature with `finfo_file()` and disable server execution in the upload folder.*
+
+---
+
+### Phase 10: Public Gallery Integration
+
+#### What We Are Building
+Integration of dynamic gallery data into the public SCMIPS website, preserving the existing design, layout, and legacy gallery folders:
+- Replace static gallery loops in `gallery.html` (renamed to `gallery.php` or included via integration bridge) with dynamic queries.
+- Read from `gallery_sessions`, `gallery_events`, and `gallery_images` where `is_published = 1`.
+- Preserve backward-compatibility for legacy images stored in `assets/images/gallery/201819/`, etc.
+
+#### Concepts to Learn
+- Converting static HTML pages to dynamic PHP without altering CSS or layout structure.
+- Constructing relative image URLs that work from both public root and admin subdirectories.
+- Fallback logic: displaying legacy static folders alongside new database-driven uploads.
+
+#### Cursor Prompt
+```text
+Adapt the public SCMIPS gallery to dynamically render from MySQL:
+1. Create public_gallery_helper.php in root or includes/:
+   - Function get_published_gallery_sessions(): Returns all active sessions with published event counts.
+   - Function get_session_events($sessionId): Returns published events for a given session.
+   - Function get_event_images($eventId): Returns published images for an event.
+2. Adapt gallery.php (preserving the exact HTML/CSS design of gallery.html):
+   - Dynamically loop through published sessions.
+   - For each session, render event cards using the existing CSS classes.
+3. Create event-gallery.php:
+   - View photos for a specific event with lightbox/image grid matching the current site styling.
+   - Ensure image paths work seamlessly whether referencing legacy assets/images/gallery/ or admin/uploads/gallery/.
+Do not change website headers, footers, navigation, or styles.
+```
+
+#### Code Walkthrough & Understanding
+- Review the public queries: verify that `WHERE is_published = 1` is strictly present in every query so drafts or deleted images are never exposed to public visitors.
+
+#### Manual Testing Instructions
+1. In the admin panel, mark an event as "Draft" (`is_published = 0`). Visit the public gallery; confirm the event does not show.
+2. Change the event to "Published" (`is_published = 1`). Refresh the public gallery; confirm it appears with all photos.
+3. Compare the visual styling of the new dynamic page with the original `gallery.html`; confirm fonts, margins, colors, and layout match identically.
+
+#### Notebook Note
+> **Developer Notebook #10:**
+> *Public pages should never perform administrative tasks or query unpublished data. Keep public queries strictly read-only and explicitly filter by `is_published = 1`.*
+
+---
+
+### Phase 11: Security Hardening, Edge-Case Validation & Manual Testing
+
+#### What We Are Building
+A thorough defensive audit of all admin endpoints, forms, file handlers, and public display templates before production deployment.
+
+#### Concepts to Learn
+- SQL injection testing (single quote and payload injection verification).
+- CSRF token tampering tests.
+- File upload fuzzing (large files, double extensions, non-image files).
+- Defensive directory traversal defense (`basename()`, `realpath()`).
+
+#### Security Hardening Tasks
+1. **Disable Directory Browsing:** Add `Options -Indexes` in `.htaccess` across all directories.
+2. **Prevent Execution in Uploads:** Verify `.htaccess` / `web.config` blocks direct execution of `.php` files inside `admin/uploads/`.
+3. **HTTP Response Headers:** Set security headers in `admin/includes/header.php`:
+   - `X-Frame-Options: SAMEORIGIN` (prevents clickjacking)
+   - `X-Content-Type-Options: nosniff` (prevents MIME sniffing)
+   - `Referrer-Policy: strict-origin-when-cross-origin`
+4. **Input Boundary Testing:** Verify behavior with long event titles (200+ characters), special characters (`<>&"'`), empty form submissions, and files exceeding PHP's `upload_max_filesize`.
+
+#### Manual Testing Checklist
+- [ ] Direct URL access without login (`/admin/dashboard.php`, `/admin/sessions/create.php`) properly redirects to login.
+- [ ] Tampered CSRF token on POST form yields 403 Forbidden.
+- [ ] Single quotes in search or input fields do not produce SQL syntax errors.
+- [ ] Uploading a PHP file disguised as `.jpg` is blocked by server MIME check.
+- [ ] Uploading an image larger than maximum allowed size displays a friendly error.
+- [ ] HTML tags entered into event title/description are escaped with `htmlspecialchars()` upon display.
+- [ ] Deleting an event safely removes its associated image files from disk.
+- [ ] Deleting a session that contains events is prevented with a clear explanation.
+
+#### Notebook Note
+> **Developer Notebook #11:**
+> *Security is not a single feature; it is a discipline applied to every input, query, file operation, and output in the application.*
+
+---
+
+### Phase 12: Backup, Deployment & Production Verification
+
+#### What We Are Building
+The production deployment strategy for the Windows-based cPanel hosting environment at `scmips.in`.
+
+#### Concepts to Learn
+- Taking full cPanel backups (files + databases).
+- FTP/SFTP deployment workflows vs cPanel File Manager upload.
+- Configuring production database credentials in `admin/config/config.php`.
+- Handling Windows IIS / Apache cPanel server quirks.
+
+#### Production Deployment Checklist
+1. **Full Site Backup:**
+   - [ ] Log in to cPanel.
+   - [ ] Download a complete home directory backup via cPanel Backup Wizard.
+   - [ ] Save an archive copy locally with the date: `scmips_backup_YYYYMMDD.zip`.
+2. **Database Provisioning:**
+   - [ ] In cPanel MySQL Databases: Create a new database (e.g., `scmips_gallery`).
+   - [ ] Create a dedicated database user with a strong random password.
+   - [ ] Assign the user to the database with `ALL PRIVILEGES`.
+   - [ ] Open phpMyAdmin in cPanel and import `admin/setup_db.sql`.
+3. **File Upload:**
+   - [ ] Upload the `admin/` folder to the web root (`public_html/admin/` or `wwwroot/admin/`).
+   - [ ] Upload the updated public gallery files (`gallery.php`, etc.).
+   - [ ] Create `admin/config/config.php` on the server with production database credentials.
+   - [ ] Verify `admin/config/config.php` file permissions are set to `640` or `600`.
+4. **Permissions & Execution Restrictions:**
+   - [ ] Ensure `admin/uploads/` and subdirectories are writable (`755` or Windows modify permissions).
+   - [ ] Verify `admin/uploads/.htaccess` and `web.config` are present to disable script execution.
+5. **Post-Deployment Smoke Testing:**
+   - [ ] Navigate to `https://scmips.in/admin/`.
+   - [ ] Log in with initial credentials.
+   - [ ] Change the default admin password immediately.
+   - [ ] Create a test session and a test event.
+   - [ ] Upload test images; verify image thumbnails load over HTTPS.
+   - [ ] Check public gallery page `https://scmips.in/gallery.php` to confirm live rendering.
+   - [ ] Test the public site on mobile and desktop browsers to verify layout integrity.
+
+#### Rollback Strategy
+If any unforeseen issue occurs during deployment:
+1. Delete the `admin/` directory on the server.
+2. Restore the original `gallery.html` from the pre-deployment backup zip.
+3. The website immediately reverts to its original static state with zero downtime.
+
+#### Notebook Note
+> **Developer Notebook #12:**
+> *Always have a 5-minute rollback plan. Because our admin panel is isolated inside `/admin/` and the original website is backed up, we can rollback instantly at any time without risking site availability.*
+
+---
+
+## 10. Hosting Verification Matrix (Pending Provider Confirmation)
+
+The hosting environment is confirmed to be Windows-based with cPanel, but specific runtime settings must be confirmed directly on the server:
+
+| Parameter | Recommended Setting | Production Status | Action / Fallback if Incompatible |
+| :--- | :--- | :--- | :--- |
+| **PHP Version** | PHP 8.1 or 8.2 | ⚠️ *Pending Verification* | Check via `phpinfo()` or `health.php`. If PHP 7.4 is active, use cPanel MultiPHP Manager to switch to PHP 8.x. |
+| **MySQL Version** | MySQL 5.7+ or MariaDB 10.3+ | ⚠️ *Pending Verification* | Compatible with standard InnoDB and UTF8mb4 schemas. |
+| **PHP GD Extension** | Enabled | ⚠️ *Pending Verification* | Check `extension_loaded('gd')`. If disabled, request host to enable in `php.ini` or manage without thumbnail resizing. |
+| **Upload Limits** | `upload_max_filesize` >= 10M<br>`post_max_size` >= 25M | ⚠️ *Pending Verification* | If default is 2MB, adjust via cPanel "Select PHP Version" > Options or `.user.ini`. |
+| **Max File Uploads** | `max_file_uploads` >= 20 | ⚠️ *Pending Verification* | Allows batch multi-photo uploads; adjust in `.user.ini` if constrained. |
+| **FTP / SFTP Access** | Available | ⚠️ *Pending Verification* | Obtain hostname, port, username, and key/password from site administrator. |
+
+---
+
+## 11. MVP Implementation Priority & Timeline
+
+To deliver maximum value without risk, we divide development into clear milestones:
+
+```text
+Milestone 1: Core Foundation (MVP)
+├── Local PHP/MySQL environment working
+├── Database schema deployed
+├── Secure Admin Login & Logout (password_hash, session, CSRF)
+├── Session Management CRUD
+├── Event Management CRUD
+└── Multi-image upload to event with thumbnail preview
+
+Milestone 2: Public Integration
+├── Dynamic public gallery reading from MySQL
+├── Exact design match with existing gallery.html
+└── Fallback/preservation of legacy academic year folders
+
+Milestone 3: Hardening & Production
+├── Complete security checklist & upload fuzzing
+├── Pre-deployment backup of scmips.in
+├── cPanel database creation & file deployment
+└── Smoke testing on live domain
+```
+
+### Estimated Timeline
+
+| Milestone / Task | Focus | Estimated Time |
+| :--- | :--- | :--- |
+| **Phases 1–3** | Setup, Source Inspection & Local Environment | 1–2 Days |
+| **Phases 4–6** | Database Schema, PDO Connection, Auth & Dashboard | 2–3 Days |
+| **Phases 7–8** | Session & Event CRUD Interfaces | 2–3 Days |
+| **Phase 9** | Multi-Image Upload, MIME Validation & Gallery Management | 2–3 Days |
+| **Phase 10** | Public Gallery Integration & Template Adaptation | 1–2 Days |
+| **Phases 11–12** | Security Hardening, cPanel Deployment & Verification | 2 Days |
+| **Total** | **Complete Working System & Production Deployment** | **~10–15 Working Days** |
+
+---
+
+## 12. Definition of Done
+
+The SCMIPS Gallery Admin Panel project is considered complete when:
+
+1. **Authentication & Access:**
+   - Authorized administrators can log in securely at `https://scmips.in/admin/`.
+   - Unauthorized users cannot access any administrative page or API endpoint.
+   - Passwords are securely hashed with `PASSWORD_DEFAULT`.
+2. **Administrative Functionality:**
+   - Admin can create, edit, and delete academic sessions safely.
+   - Admin can create, edit, publish/unpublish, and delete events.
+   - Admin can upload multiple images simultaneously with visual preview.
+   - Admin can delete individual images and confirm file unlinking from disk.
+3. **Security Standards:**
+   - All database queries use PDO prepared statements with zero string interpolation.
+   - CSRF tokens protect all POST requests.
+   - Uploaded files are strictly validated by binary MIME signature, assigned randomized filenames, and placed in a script-execution-disabled directory.
+4. **Public Site Preservation:**
+   - All 450+ non-gallery files, styling, layout, headers, and footers remain unchanged.
+   - Legacy gallery images continue to be displayed without broken links.
+   - Newly published events and images automatically appear on the public gallery.
+5. **Production Deployment & Rollback:**
+   - A full pre-deployment backup is preserved.
+   - System runs smoothly on the production Windows cPanel hosting server.
+   - Database credentials are kept in a gitignored `config.php`.
+   - The developer understands and can explain every module, query, and security check implemented.
