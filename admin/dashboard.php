@@ -77,7 +77,7 @@ require_once __DIR__ . '/includes/header.php';
 <div class="row g-3 mb-4">
     <!-- Card 1: Academic Sessions (Teal) -->
     <div class="col-12 col-sm-6 col-xl-3">
-        <div class="gauge-card">
+        <a href="sessions/index.php" class="gauge-card" title="Click to Manage Academic Sessions">
             <div class="gauge-circle teal">
                 <span class="gauge-number"><?= $sessionsCount ?></span>
             </div>
@@ -93,12 +93,12 @@ require_once __DIR__ . '/includes/header.php';
                 <span class="mini-bar teal" style="height: 11px;"></span>
                 <span class="mini-bar teal" style="height: 18px;"></span>
             </div>
-        </div>
+        </a>
     </div>
 
     <!-- Card 2: Campus Events (Orange) -->
     <div class="col-12 col-sm-6 col-xl-3">
-        <div class="gauge-card">
+        <a href="events/index.php" class="gauge-card" title="Click to Manage All Campus Events">
             <div class="gauge-circle orange">
                 <span class="gauge-number"><?= $eventsTotal ?></span>
             </div>
@@ -114,12 +114,12 @@ require_once __DIR__ . '/includes/header.php';
                 <span class="mini-bar orange" style="height: 13px;"></span>
                 <span class="mini-bar orange" style="height: 15px;"></span>
             </div>
-        </div>
+        </a>
     </div>
 
     <!-- Card 3: Published Events (Green) -->
     <div class="col-12 col-sm-6 col-xl-3">
-        <div class="gauge-card">
+        <a href="events/index.php" class="gauge-card" title="Click to View Published Events">
             <div class="gauge-circle green">
                 <span class="gauge-number"><?= $eventsPublished ?></span>
             </div>
@@ -135,12 +135,12 @@ require_once __DIR__ . '/includes/header.php';
                 <span class="mini-bar green" style="height: 14px;"></span>
                 <span class="mini-bar green" style="height: 16px;"></span>
             </div>
-        </div>
+        </a>
     </div>
 
     <!-- Card 4: Total Photos (Blue) -->
     <div class="col-12 col-sm-6 col-xl-3">
-        <div class="gauge-card">
+        <a href="images/upload.php" class="gauge-card" title="Click to Upload and Manage Photos">
             <div class="gauge-circle blue">
                 <span class="gauge-number"><?= $imagesCount ?></span>
             </div>
@@ -156,7 +156,7 @@ require_once __DIR__ . '/includes/header.php';
                 <span class="mini-bar blue" style="height: 14px;"></span>
                 <span class="mini-bar blue" style="height: 18px;"></span>
             </div>
-        </div>
+        </a>
     </div>
 </div>
 
@@ -165,63 +165,63 @@ require_once __DIR__ . '/includes/header.php';
      ======================================================================== -->
 <div class="row g-3 mb-4">
     <div class="col-6 col-md-4 col-xl-2">
-        <div class="quick-stat-box shadow-sm">
+        <a href="sessions/index.php" class="quick-stat-box shadow-sm" title="Manage Academic Sessions">
             <div class="quick-stat-icon text-warning">
                 <i class="fa-solid fa-graduation-cap"></i>
             </div>
             <div class="quick-stat-num"><?= $sessionsCount ?></div>
             <div class="quick-stat-label">Academic Sessions</div>
-        </div>
+        </a>
     </div>
 
     <div class="col-6 col-md-4 col-xl-2">
-        <div class="quick-stat-box shadow-sm">
+        <a href="events/index.php" class="quick-stat-box shadow-sm" title="Manage Events">
             <div class="quick-stat-icon text-primary">
                 <i class="fa-solid fa-calendar-check"></i>
             </div>
             <div class="quick-stat-num"><?= $eventsTotal ?></div>
             <div class="quick-stat-label">Total Events</div>
-        </div>
+        </a>
     </div>
 
     <div class="col-6 col-md-4 col-xl-2">
-        <div class="quick-stat-box shadow-sm">
+        <a href="events/index.php" class="quick-stat-box shadow-sm" title="View Published Events">
             <div class="quick-stat-icon text-danger">
                 <i class="fa-solid fa-eye"></i>
             </div>
             <div class="quick-stat-num"><?= $eventsPublished ?></div>
             <div class="quick-stat-label">Live Published</div>
-        </div>
+        </a>
     </div>
 
     <div class="col-6 col-md-4 col-xl-2">
-        <div class="quick-stat-box shadow-sm">
+        <a href="images/upload.php" class="quick-stat-box shadow-sm" title="Upload Photos">
             <div class="quick-stat-icon text-success">
                 <i class="fa-solid fa-camera-retro"></i>
             </div>
             <div class="quick-stat-num"><?= $imagesCount ?></div>
             <div class="quick-stat-label">Gallery Photos</div>
-        </div>
+        </a>
     </div>
 
     <div class="col-6 col-md-4 col-xl-2">
-        <div class="quick-stat-box shadow-sm">
+        <a href="profile.php" class="quick-stat-box shadow-sm" title="Edit Admin Profile & Password">
             <div class="quick-stat-icon text-info">
                 <i class="fa-solid fa-user-shield"></i>
             </div>
             <div class="quick-stat-num">1</div>
             <div class="quick-stat-label">Active Admin</div>
-        </div>
+        </a>
     </div>
 
     <div class="col-6 col-md-4 col-xl-2">
-        <div class="quick-stat-box shadow-sm">
+        <a href="health.php" target="_blank" class="quick-stat-box shadow-sm" title="View System & Database Health Diagnostics">
             <div class="quick-stat-icon text-warning">
                 <i class="fa-solid fa-database"></i>
             </div>
             <div class="quick-stat-num">MySQL</div>
             <div class="quick-stat-label">PDO Connected</div>
-        </div>
+        </a>
     </div>
 </div>
 
