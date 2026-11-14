@@ -1,6 +1,6 @@
 <?php
 /**
- * SCMIPS Gallery Admin Panel - Administrator Dashboard
+ * SCMIPS Gallery Admin Panel - Administrator Dashboard (Phase 6)
  */
 
 require_once __DIR__ . '/includes/auth.php';
@@ -9,13 +9,25 @@ require_once __DIR__ . '/includes/db.php';
 $pageTitle = 'Dashboard';
 $activePage = 'dashboard';
 
-// Fetch summary metrics
+// Fetch summary metrics & aggregations
 try {
     $sessionsCount = (int)$pdo->query("SELECT COUNT(*) FROM gallery_sessions")->fetchColumn();
-    $eventsCount   = (int)$pdo->query("SELECT COUNT(*) FROM gallery_events")->fetchColumn();
-    $imagesCount   = (int)$pdo->query("SELECT COUNT(*) FROM gallery_images")->fetchColumn();
+    
+    // Events count breakdown (Total, Published, Draft)
+    $eventsQuery = $pdo->query(
+        "SELECT COUNT(*) AS total,
+                COUNT(CASE WHEN is_published = 1 THEN 1 END) AS published,
+                COUNT(CASE WHEN is_published = 0 THEN 1 END) AS draft
+         FROM gallery_events"
+    )->fetch();
+    $eventsTotal     = (int)($eventsQuery['total'] ?? 0);
+    $eventsPublished = (int)($eventsQuery['published'] ?? 0);
+    $eventsDraft     = (int)($eventsQuery['draft'] ?? 0);
 
-    // Fetch recently added events
+    // Photos count
+    $imagesCount = (int)$pdo->query("SELECT COUNT(*) FROM gallery_images")->fetchColumn();
+
+    // Fetch recently added events with session year and photo count
     $stmtRecentEvents = $pdo->query(
         "SELECT e.id, e.title, e.event_date, e.is_published, s.academic_year,
                 (SELECT COUNT(*) FROM gallery_images i WHERE i.event_id = e.id) AS image_count
@@ -26,17 +38,19 @@ try {
     $recentEvents = $stmtRecentEvents->fetchAll();
 } catch (PDOException $e) {
     error_log('Dashboard Metrics Error: ' . $e->getMessage());
-    $sessionsCount = 0;
-    $eventsCount = 0;
-    $imagesCount = 0;
-    $recentEvents = [];
+    $sessionsCount   = 0;
+    $eventsTotal     = 0;
+    $eventsPublished = 0;
+    $eventsDraft     = 0;
+    $imagesCount     = 0;
+    $recentEvents    = [];
 }
 
 require_once __DIR__ . '/includes/header.php';
 ?>
 
 <!-- Dashboard Welcome Header -->
-<div class="d-flex align-items-center justify-content-between mb-4">
+<div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-4 gap-3">
     <div>
         <h1 class="h3 mb-1 text-gray-800 fw-bold" style="color: var(--brand-primary);">
             Welcome, <?= e($_SESSION['admin_name'] ?? 'Administrator') ?>!
@@ -45,7 +59,7 @@ require_once __DIR__ . '/includes/header.php';
             Manage academic sessions, events, and gallery photographs for the SCMIPS public website.
         </p>
     </div>
-    <div class="d-flex gap-2">
+    <div class="d-flex flex-wrap gap-2">
         <a href="sessions/create.php" class="btn btn-sm btn-brand-primary shadow-sm">
             <i class="fa-solid fa-plus me-1"></i> New Session
         </a>
@@ -62,7 +76,7 @@ require_once __DIR__ . '/includes/header.php';
 <div class="row g-3 mb-4">
     <!-- Academic Sessions -->
     <div class="col-12 col-sm-6 col-xl-4">
-        <div class="card stat-card stat-sessions h-100">
+        <div class="card stat-card stat-sessions h-100 shadow-sm">
             <div class="card-body p-3 d-flex align-items-center justify-content-between">
                 <div>
                     <div class="text-muted small text-uppercase fw-bold mb-1">Academic Sessions</div>
@@ -82,11 +96,15 @@ require_once __DIR__ . '/includes/header.php';
 
     <!-- Gallery Events -->
     <div class="col-12 col-sm-6 col-xl-4">
-        <div class="card stat-card stat-events h-100">
+        <div class="card stat-card stat-events h-100 shadow-sm">
             <div class="card-body p-3 d-flex align-items-center justify-content-between">
                 <div>
                     <div class="text-muted small text-uppercase fw-bold mb-1">Total Events</div>
-                    <div class="h2 mb-0 fw-bold" style="color: #c77e1c;"><?= $eventsCount ?></div>
+                    <div class="h2 mb-1 fw-bold" style="color: #c77e1c;"><?= $eventsTotal ?></div>
+                    <div class="small text-muted">
+                        <span class="text-success fw-semibold"><?= $eventsPublished ?> published</span> &bull; 
+                        <span class="text-secondary"><?= $eventsDraft ?> draft</span>
+                    </div>
                 </div>
                 <div class="stat-icon bg-warning bg-opacity-10 text-warning">
                     <i class="fa-solid fa-calendar-check"></i>
@@ -102,7 +120,7 @@ require_once __DIR__ . '/includes/header.php';
 
     <!-- Gallery Images -->
     <div class="col-12 col-sm-6 col-xl-4">
-        <div class="card stat-card stat-images h-100">
+        <div class="card stat-card stat-images h-100 shadow-sm">
             <div class="card-body p-3 d-flex align-items-center justify-content-between">
                 <div>
                     <div class="text-muted small text-uppercase fw-bold mb-1">Gallery Photographs</div>
