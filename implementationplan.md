@@ -61,23 +61,148 @@ The existing SCMIPS production environment imposes specific operational boundari
 
 ---
 
-## 4. Existing Gallery Source Findings
+## 4. Source Code Inspection & Technical Verification Audit
 
-Inspection of the supplied source archive revealed the following gallery-related assets:
+A comprehensive, read-only inspection of the complete website snapshot (`reference/scmips-website-source/`) was performed to map the legacy codebase, gallery mechanics, asset dependencies, and database footprints.
 
-- **Public HTML/PHP Files:**
-  - `gallery.html`: Main gallery landing page displaying sessions or highlights.
-  - `gallery201819.html`: Static gallery page for academic session 2018–2019.
-  - `gallery201920.html`: Static gallery page for academic session 2019–2020.
-  - `gallery202122.html`: Static gallery page for academic session 2021–2022.
-  - `gallary.html`: Legacy/alternate spelling page (needs verification during source inspection).
-  - `showimages.php`: Existing script for dynamic or query-string-based image display.
-- **Image Directory Structure:**
-  - `assets/images/gallery/201819/`
-  - `assets/images/gallery/201920/`
-  - `assets/images/gallery/202122/`
+---
 
-*Note: These paths are findings from the local archive. Before integration, verify exact file paths on the live server.*
+### 4.1 Verified Findings
+
+#### A. Repository & File System Overview
+* **Total Archive Files:** ~458 files grouped into:
+  * **Images:** 247 `.jpg`, 41 `.jpeg`, 24 `.png`, 6 `.svg`
+  * **Web Pages:** 64 `.html`, 11 `.php`, 1 `.shtml`
+  * **Stylesheets & Scripts:** 9 `.css` (Bootstrap 4.0.0-beta.2, Swiper, custom), 15 `.js` (jQuery 3.2.1, Bootstrap 4 bundle, simpleLightbox in `main.js`, Sheetrock.js, GLightbox)
+  * **Documents & Data:** 5 `.json` (faculty data), 4 `.pdf`, 2 `.docx`, 1 `.xlsx`, 1 `.txt`
+  * **Fonts & Maps:** 4 web font files, 3 source maps, 1 `.ftpquota`
+* **File Separation:** The reference website code resides in `reference/scmips-website-source/` (gitignored), ensuring zero accidental alteration of legacy assets.
+
+#### B. Database Status & Legacy PHP Scripts
+* **Active Database Connection:** **NONE.** There is zero active SQL or database code anywhere in the website.
+* **Legacy DB Reference:** An old reference `//include_once 'conMySql.php';` was found commented out inside `linkmail.php` and `sendadmenq.php`. The file `conMySql.php` does not exist in the archive.
+* **Audit of all 11 PHP Files:**
+  1. `admission-enquiry.php`: Static HTML form for admission enquiries (POST to `sendadmenq.php`).
+  2. `fac-opening.php`: Static HTML form for job vacancies (POST to `linkmail.php`).
+  3. `linkmail.php`: Processes faculty job applications using PHP native `mail()`.
+  4. `linkmails.php`: Secondary contact form processor via PHP `mail()`.
+  5. `mail.php`: Contact / enquiry email dispatcher via PHP `mail()`.
+  6. `sendadmenq.php`: Admission enquiry processor via PHP `mail()`.
+  7. `showimages.php` (in root): Incomplete prototype reading `/assets/images/gallery/201819/*.jpg` with hardcoded absolute path.
+  8. `showimg.php` (in root): Standalone 10-line test script using `scandir('assets/images/gallery/201819/')`.
+  9. `assets/images/showimg.php`: Test script reading `/assets/images/*.{jpg,png...}`.
+  10. `assets/images/gallery/201819/showimages.php`: Duplicate of root `showimages.php`.
+  11. `assets/images/gallery/201819/showimg.php`: Duplicate test script inside the image folder.
+
+#### C. Gallery Hierarchy & Public Page Structure
+The gallery follows a clear 3-tier logical structure:
+$$\text{Academic Session (e.g. 2018–2019)} \longrightarrow \text{Events (e.g. Blood Donation Camp)} \longrightarrow \text{Images}$$
+
+* **`gallery.html` (Gallery Portal):**
+  * Displays academic session cards inside `<div class="home-page-icon-boxes">`.
+  * Active links: `gallery202122.html`, `gallery201920.html`, `gallery201819.html`.
+  * Broken / placeholder links: `SESSION 2017-2018` and `SESSION 2016-2017` link to `./matrimonial/` (directory does not exist).
+* **`gallery201819.html`:**
+  * 6 distinct event sections under Session 2018–2019:
+    1. *Blood Donation Camp* (images 1–6)
+    2. *Career Guidance* (images 7–12)
+    3. *Fresher's Party* (images 13–18)
+    4. *Induction* (images 19–24)
+    5. *Koshal Bharat* (images 25–30)
+    6. *Seminar* (images 31–45; HTML requests up to 48)
+* **`gallery201920.html`:**
+  * 11 distinct event sections under Session 2019–2020:
+    1. *Annual Function* (images 1–87)
+    2. *Career Guidance* (images 88–103)
+    3. *Fresher's Party* (images 104–121)
+    4. *Induction*, *Manchal Village Visit*, *Om Shanti Om*, *Personality Development*, *Republic Day*, *Women Health Seminar*, *Yoga Activity*, *Youth Festival Quiz*.
+* **`gallery202122.html`:**
+  * Contains a single flat gallery grid of 10 image blocks (9 unique files).
+* **`gallary.html` (Spelling typo page):**
+  * Legacy standalone page referencing `assets/images/gallery/1.jpg`–`20.jpg` with a banner image from SVIMI.
+* **`photo-gallery.html`:**
+  * Inherited template from sister college SVIM; uses `assets/images/events/media/1.jpg`–`20.jpg`.
+* **`201011.html` through `201819.html`:**
+  * **Not galleries** — these are static tables of student placement statistics.
+
+#### D. Image Assets & Verified Path Discrepancies
+| Directory Path | Files on Disk | Referenced in HTML | Discrepancies & Broken Links Uncovered |
+| :--- | :---: | :---: | :--- |
+| `assets/images/gallery/` | 14 files | 20 images (`gallary.html`) | **`15.jpg` through `20.jpg` are missing on disk** (broken links in legacy `gallary.html`). |
+| `assets/images/gallery/201819/` | 45 images | 48 images (`gallery201819.html`) | **`46.jpg`, `47.jpg`, and `48.jpg` do not exist on disk** (broken links in legacy HTML). |
+| `assets/images/gallery/201920/` | 79 images | 79 images (`gallery201920.html`) | **Extension mismatch:** HTML calls `114.jpg`, but file on disk is `114.jpeg` (broken on Linux/cPanel). |
+| `assets/images/gallery/202122/` | 9 images | 10 images (`gallery202122.html`) | File `9.JPG` is hardcoded twice in HTML. Mixed extension casing (`.JPG` and `.jpg`). |
+
+#### E. Reusable Frontend Styling & JavaScript Libraries
+* **Public UI Framework:** Bootstrap v4.0.0-beta.2 (`assets/css/bootstrap.min.css`).
+* **SCMIPS Color Palette:**
+  * Primary Navy: `#021371`
+  * Secondary Amber/Gold: `#f1a238`
+  * Dark Slate Text: `#212529`
+  * Light Background: `#ecf2f5`
+* **Lightbox Plugin:** **simpleLightbox** (bundled inside `assets/js/main.js`). Initialized via:
+  ```javascript
+  $('#photo-gallery .galleryImg').simpleLightbox({
+    sourceAttr: "data-imgsrc"
+  });
+  ```
+* **HTML Image Card Structure:**
+  ```html
+  <div data-imgsrc="assets/images/gallery/201819/1.jpg" class="galleryImg col-xl-3 col-lg-3 col-md-6 mb-4">
+    <img src="assets/images/gallery/201819/1.jpg" class="img-fluid img-thumbnail" alt="">
+  </div>
+  ```
+* **External Dynamic Dependencies:** Google Sheets integration via `Sheetrock.js` to populate notice-board tickers dynamically.
+
+#### F. Missing Linked Target Files Identified
+Inspection of navigation and anchors across legacy HTML revealed several non-existent targets:
+1. `about-institute-description.html` (linked from main nav menu; missing)
+2. `career.html` (linked from footers; missing)
+3. `recongnition-description.html` (linked from nav; missing)
+4. `scholarship.html` (missing)
+5. `semhall.html` (linked from nav; missing)
+6. `placement/students-testimonials.html` (missing)
+7. `./matrimonial/` (placeholder link on gallery session cards; missing)
+8. `/Websites/scmips/` (hardcoded local root on brand logo in header)
+
+---
+
+### 4.2 Assumptions
+
+1. **Hosting Web Server:** Production environment is Windows cPanel or Apache-compatible Linux shared hosting with PHP 8.x and MySQL 5.7+/8.0.
+2. **URL Rewriting & Root Path:** The website is assumed to reside at domain root (`scmips.in/`), while the admin panel resides at `scmips.in/admin/`.
+3. **Public Display Parity:** Visitors expect the dynamic gallery to visually look 100% indistinguishable from the current static design, with identical responsiveness, layout, colors, and lightbox behavior.
+4. **Admin UI Framework Independence:** The admin panel can use **Bootstrap 5** for modern administration components (modals, toasts, forms, flexbox) without any conflict, since admin pages are completely decoupled from public templates.
+
+---
+
+### 4.3 Missing Information Requiring Confirmation
+
+1. **Production Database Credentials:** Exact live MySQL host, database name, user, and password will be needed prior to production deployment (local development uses `scmips_db` with `root`).
+2. **Missing Media Status:** Confirmation whether the missing image files (`46.jpg`–`48.jpg`, `15.jpg`–`20.jpg`) and missing pages (`about-institute-description.html`, `semhall.html`) exist on the live server or were omitted from the download archive.
+3. **cPanel / FTP Credentials:** Pre-deployment backup requires valid cPanel or FTP access to create an archive of the live server before modifying files.
+
+---
+
+### 4.4 Files Requiring Modification & Safe Integration Strategy
+
+#### Files Requiring Adaptation:
+1. **`gallery.html` $\longrightarrow$ `gallery.php`:**
+   * Convert static session cards into a dynamic PDO loop querying active records from `gallery_sessions`.
+   * Keep a 301 redirect from `gallery.html` to `gallery.php` (or use `.htaccess` rewrite) to prevent dead external bookmarks.
+2. **Session Pages (`gallery201819.html`, `gallery201920.html`, `gallery202122.html`) $\longrightarrow$ `gallery-session.php`:**
+   * Introduce a unified dynamic template `gallery-session.php?id=X` (or clean slug `gallery/2021-2022`).
+   * Fetches session details, published events, and images dynamically from MySQL.
+   * Renders the identical `.galleryImg` HTML markup and activates `simpleLightbox`.
+3. **`events.html`:**
+   * Update the single link pointing to `gallery.html` (line 246) to point to `gallery.php`.
+
+#### Safe Rollout Principles:
+* **Zero Disruption:** 450+ non-gallery files (admissions, courses, faculties, placement, notices) remain completely untouched.
+* **Database Pre-Seeding:** Seed `scmips_db` with existing sessions (2018–2019, 2019–2020, 2021–2022) and their corresponding image file paths before switching public links, guaranteeing zero downtime or lost photos.
+* **Pre-Deployment Backup:** Complete tar/zip backup of live web root before uploading the dynamic public templates.
+
+---
 
 ---
 
